@@ -22,9 +22,9 @@
     </div>
     <h4 class="mb-3">로그인 정보 입력</h4>
     <form action = "@{/loginProc}" th:action th:object="${loginForm}" method="post">
-<!--        <div th:if="${#fields.hasGlobalErrors()}">-->
-<!--            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>-->
-<!--        </div>-->
+        <div th:if="${#fields.hasGlobalErrors()}">
+            <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+        </div>
       <div class="mb-3">
         <label for="inputLoginId" class="form-label">아이디</label>
         <input type="text" class="form-control" id="inputLoginId" th:field="*{loginId}" placeholder="ID">

@@ -1,8 +1,10 @@
 package graduationWork.server.controller;
 
+import graduationWork.server.domain.Insurance;
 import graduationWork.server.domain.User;
 import graduationWork.server.domain.Wallet;
 import graduationWork.server.dto.PasswordUpdateForm;
+import graduationWork.server.repository.InsuranceRepository;
 import graduationWork.server.repository.UserRepository;
 import graduationWork.server.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,6 +22,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.List;
+
 @Controller
 @Slf4j
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class UserController {
 
     private final UserService userService;
     private final UserRepository userRepository;
+    private final InsuranceRepository insuranceRepository;
 
     @GetMapping("/join")
     public String joinForm(@ModelAttribute User user) {
@@ -86,5 +91,15 @@ public class UserController {
         User loginUser = (User) session.getAttribute("loginUser");
         userService.updateWalletAccount(loginUser, wallet);
         return "redirect:/user/info";
+    }
+
+    @GetMapping("/user/insurances")
+    public String getUserInsurances(HttpSession session,Model model) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        Long loginUserId = loginUser.getId();
+
+        List<Insurance> insurances = insuranceRepository.findAllOfUser(loginUserId);
+        model.addAttribute("insurances", insurances);
+        return "users/insuranceLists";
     }
 }

@@ -56,6 +56,9 @@ public class User {
     @JoinColumn(name = "wallet_id")
     private Wallet wallet;
 
+    @OneToMany(mappedBy = "user")
+    private List<Insurance> insurances = new ArrayList<>();
+
     //==연관 관계 편의 메서드==//
     public void updateWallet(Wallet walletInfo) {
         this.wallet = walletInfo;

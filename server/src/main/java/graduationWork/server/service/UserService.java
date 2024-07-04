@@ -22,7 +22,6 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
     public Long join(User user) {
@@ -72,8 +71,4 @@ public class UserService {
         user.updateWallet(wallet);
         userRepository.save(user);
     }
-
-//    public String getPassword() {
-//        return userRepository.getPassword();
-//    }
 }

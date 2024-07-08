@@ -1,5 +1,5 @@
 package graduationWork.server.enumurate;
 
 public enum CompensationStatus {
-    POSSIBLE, IMPOSSIBLE, COMPENSATING, COMPENSATED
+    NOT_SUBMITTED, POSSIBLE, IMPOSSIBLE, COMPENSATING, COMPENSATED
 }

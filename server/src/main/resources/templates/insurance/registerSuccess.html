@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>보험 가입 성공</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container" style="max-width: 60%">
+    <div class="py-5 text-center">
+        <h2>보험 가입 성공</h2>
+    </div>
+    <div class="alert alert-success" role="alert">
+        보험 가입이 성공적으로 완료되었습니다.
+    </div>
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title" th:text="${userInsurance.insurance.name}">보험 이름</h5>
+            <p class="card-text">
+                <strong>보험료:</strong> <span th:text="${userInsurance.registerPrice}">지불할 보험료</span><br>
+                <strong>보상 한도:</strong> <span th:text="${userInsurance.insurance.formattedCoverageLimit}">보상 한도</span><br>
+                <strong>보험 시작 날짜:</strong> <span th:text="${userInsurance.startDate}">시작 날짜</span><br>
+                <strong>보험 종료 날짜:</strong> <span th:text="${userInsurance.endDate}">종료 날짜</span><br>
+            </p>
+        </div>
+    </div>
+    <div class="py-5 text-center">
+        <button class="btn btn-primary" th:onclick="|location.href='@{/user/info}'|">내 정보로 이동</button>
+    </div>
+</div>
+</body>
+</html>

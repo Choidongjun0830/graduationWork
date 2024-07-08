@@ -56,12 +56,17 @@ public class User {
     @JoinColumn(name = "wallet_id")
     private Wallet wallet;
 
-    @OneToMany(mappedBy = "user")
-    private List<Insurance> insurances = new ArrayList<>();
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<UserInsurance> userInsurances = new ArrayList<>();
 
     //==연관 관계 편의 메서드==//
     public void updateWallet(Wallet walletInfo) {
         this.wallet = walletInfo;
         wallet.setUser(this);
+    }
+
+    public void addUserInsurance(UserInsurance userInsurance) {
+        userInsurances.add(userInsurance);
+        userInsurance.setUser(this);
     }
 }

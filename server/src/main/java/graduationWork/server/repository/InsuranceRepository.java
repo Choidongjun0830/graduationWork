@@ -50,7 +50,9 @@ public class InsuranceRepository {
     }
 
     public List<Insurance> findAllByStatus(InsuranceStatus status) {
-        return em.createQuery("select i from Insurance i where ")
+        return em.createQuery("select i from Insurance i where i.status = :status")
+                .setParameter("status", status)
+                .getResultList();
     }
 
     //동적 쿼리로 해야할듯 ByStatus 이런건..

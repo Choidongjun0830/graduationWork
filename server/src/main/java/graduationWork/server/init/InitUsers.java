@@ -6,25 +6,26 @@ import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
 
 @Component
 @RequiredArgsConstructor
-public class InitDb {
+public class InitUsers {
 
-    private final InitService initService;
+    private final InitUserService initUserService;
 
     @PostConstruct
     public void init() {
-        initService.dbInit1();
-        initService.dbInit2();
+        initUserService.dbInit1();
+        initUserService.dbInit2();
     }
 
     @Component
     @Transactional
     @RequiredArgsConstructor
-    static class InitService {
+    static class InitUserService {
 
         private final EntityManager em;
         private final PasswordEncoder passwordEncoder;
@@ -36,6 +37,7 @@ public class InitDb {
             user.setPassword(passwordEncoder.encode("adong08","1111"));
             user.setRole("ROLE_ADMIN");
             user.setEmail("dsada1234@naver.com");
+            user.setJoinDate(LocalDate.now());
             em.persist(user);
         }
 
@@ -46,6 +48,7 @@ public class InitDb {
             user.setPassword(passwordEncoder.encode("adong0808","1111"));
             user.setRole("ROLE_USER");
             user.setEmail("qweqweqwe@naver.com");
+            user.setJoinDate(LocalDate.now());
             em.persist(user);
         }
     }

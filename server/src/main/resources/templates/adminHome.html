@@ -5,21 +5,20 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 <body>
-<div class="container" style="max-width: 600px">
+<div class="container" style="max-width: 30%">
     <div class="py-5 text-center">
         <h2>관리자 홈 화면</h2>
     </div>
-    <hr class="my-4">
     <div class="row">
         <div class="col">
             <button class="w-100 btn btn-primary btn-lg" type="button"
-                    th:onclick="|location.href='@{/insurance/requests}'|">
-                보험 신청 관리
+                    th:onclick="|location.href='@{/insurance/admin/compensation/requests}'|">
+                보상 신청 관리
             </button>
         </div>
     </div>
 </div> <!-- /container -->
-<div class="container" style="max-width: 800px">
+<div class="container" style="max-width: 60%">
     <hr class="my-4">
     <div class="row dropdown">
         <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">

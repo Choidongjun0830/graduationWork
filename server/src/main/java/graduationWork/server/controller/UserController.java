@@ -2,10 +2,12 @@ package graduationWork.server.controller;
 
 import graduationWork.server.domain.Insurance;
 import graduationWork.server.domain.User;
+import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.domain.Wallet;
 import graduationWork.server.dto.PasswordUpdateForm;
 import graduationWork.server.repository.InsuranceRepository;
 import graduationWork.server.repository.UserRepository;
+import graduationWork.server.service.UserInsuranceService;
 import graduationWork.server.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -30,7 +32,7 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
+    private final UserInsuranceService userInsuranceService;
     private final InsuranceRepository insuranceRepository;
 
     @GetMapping("/join")
@@ -98,8 +100,8 @@ public class UserController {
         User loginUser = (User) session.getAttribute("loginUser");
         Long loginUserId = loginUser.getId();
 
-        List<Insurance> insurances = insuranceRepository.findAllOfUser(loginUserId);
-        model.addAttribute("insurances", insurances);
+        List<UserInsurance> userInsurances = userInsuranceService.findUserInsurances(loginUserId);
+        model.addAttribute("userInsurances", userInsurances);
         return "users/insuranceLists";
     }
 }

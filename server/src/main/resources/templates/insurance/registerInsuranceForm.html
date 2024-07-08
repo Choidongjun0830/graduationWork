@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/header :: header">
+    <title>보험 가입</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<div class="container" style="max-width: 60%">
+    <div class="py-5 text-center">
+        <h2>보험 가입</h2>
+    </div>
+    <form th:action="@{/insurance/new/{insuranceId}(insuranceId=${insurance.id})}" method="post">
+        <div class="mb-3">
+            <label for="insuranceName" class="form-label">보험 이름</label>
+            <input type="text" class="form-control" id="insuranceName" name="insuranceName" th:value="${insurance.name}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="premium" class="form-label">보험료</label>
+            <input type="text" class="form-control" id="premium" name="premium" th:value="${insurance.formattedPremium}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="coverageLimit" class="form-label">보상 한도</label>
+            <input type="text" class="form-control" id="coverageLimit" name="coverageLimit" th:value="${insurance.formattedCoverageLimit}" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="startDate" class="form-label">보험 시작 날짜</label>
+            <input type="date" class="form-control" id="startDate" name="startDate" required>
+        </div>
+        <div class="mb-3">
+            <label for="endDate" class="form-label">보험 종료 날짜</label>
+            <input type="date" class="form-control" id="endDate" name="endDate" required>
+        </div>
+        <button class="w-100 btn btn-primary btn-lg" type="submit">가입</button>
+    </form>
+</div>
+</body>
+</html>

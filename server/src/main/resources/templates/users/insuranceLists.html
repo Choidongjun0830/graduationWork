@@ -1,35 +1,49 @@
-<!DOCTYPE HTML><html xmlns:th="http://www.thymeleaf.org">
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="fragments/header :: header">
     <title>졸업 작품</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style>
+        .table td, .table th {
+            vertical-align: middle;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-<div class="container" style="max-width: 800px">
+<div class="container" style="max-width: 60%">
     <div class="py-5 text-center">
         <h2>사용자 보험 정보</h2>
     </div>
     <div class="table-responsive">
-        <table class="table table-striped">
+        <table class="table table-striped text-center">
             <thead>
             <tr>
                 <th scope="col">보험 이름</th>
                 <th scope="col">보험 가입 날짜</th>
                 <th scope="col">보험 시작 날짜</th>
                 <th scope="col">보험 만료일</th>
-                <th scope="col">보험 상태</th>
-                <th scope="col">보험료</th>
+                <th scope="col">보상 상태</th>
+                <th scope="col">가입 보험료</th>
                 <th scope="col">보상 한도</th>
+                <th scope="col">보상 신청</th>
             </tr>
             </thead>
             <tbody>
-            <tr th:each="insurance : ${insurances}">
-                <td th:text="${insurance.name}">보험 이름</td>
-                <td th:text="${insurance.registerDate}">가입 날짜</td>
-                <td th:text="${insurance.startDate}">시작 날짜</td>
-                <td th:text="${insurance.endDate}">만료일</td>
-                <td th:text="${insurance.status}">상태</td>
-                <td th:text="${insurance.premium}">보험료</td>
-                <td th:text="${insurance.coverageLimit}">보상 한도</td>
+            <tr th:each="userInsurance : ${userInsurances}">
+                <td th:text="${userInsurance.insurance.name}">보험 이름</td>
+                <td th:text="${userInsurance.registerDate}">가입 날짜</td>
+                <td th:text="${userInsurance.startDate}">시작 날짜</td>
+                <td th:text="${userInsurance.endDate}">만료일</td>
+                <td th:text="${userInsurance.compensationStatus}">상태</td>
+                <td th:text="${userInsurance.registerPrice}">보험료</td>
+                <td th:text="${userInsurance.insurance.formattedCoverageLimit}">보상 한도</td>
+                <td>
+                    <form th:action="@{/insurance/compensation/apply}" method="post">
+                        <input type="hidden" th:name="insuranceId" th:value="${userInsurance.id}" />
+                        <button class="btn btn-primary" type="submit">보상 신청</button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>

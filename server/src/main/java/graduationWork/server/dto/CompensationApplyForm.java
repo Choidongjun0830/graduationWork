@@ -18,4 +18,14 @@ public class CompensationApplyForm {
 
     @Enumerated(EnumType.STRING)
     private CompensationOption compensationOption;
+
+    @Override
+    public String toString() {
+        return "CompensationApplyForm{" +
+                "email='" + email + '\'' +
+                ", reason='" + reason + '\'' +
+                ", occurrenceDate=" + occurrenceDate +
+                ", compensationOption=" + compensationOption +
+                '}';
+    }
 }

@@ -1,12 +1,10 @@
 package graduationWork.server.controller;
 
-import graduationWork.server.domain.Insurance;
 import graduationWork.server.domain.User;
 import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.domain.Wallet;
 import graduationWork.server.dto.PasswordUpdateForm;
 import graduationWork.server.repository.InsuranceRepository;
-import graduationWork.server.repository.UserRepository;
 import graduationWork.server.service.UserInsuranceService;
 import graduationWork.server.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +34,6 @@ public class UserController {
 
     @GetMapping("/join")
     public String joinForm(@ModelAttribute User user) {
-        log.info("Join Controller");
         return "users/joinMemberForm";
     }
 
@@ -68,7 +64,6 @@ public class UserController {
         if(bindingResult.hasErrors()){
             return "users/userInfo";
         }
-
 
         User loginUser = (User) session.getAttribute("loginUser");
         boolean updatePassword = userService.updatePassword(loginUser, passwordUpdateForm);
@@ -102,6 +97,6 @@ public class UserController {
 
         List<UserInsurance> userInsurances = userInsuranceService.findUserInsurances(loginUserId);
         model.addAttribute("userInsurances", userInsurances);
-        return "users/insuranceLists";
+        return "users/insuranceListsForUser";
     }
 }

@@ -1,5 +1,6 @@
 package graduationWork.server.domain;
 
+import graduationWork.server.enumurate.CompensationOption;
 import graduationWork.server.enumurate.CompensationStatus;
 import graduationWork.server.enumurate.InsuranceStatus;
 import jakarta.persistence.*;
@@ -40,6 +41,9 @@ public class UserInsurance {
     //보상 상태 (가능, 불가능, 보상중, 보상됨)
     @Enumerated(EnumType.STRING)
     private CompensationStatus compensationStatus;
+
+    @Enumerated(EnumType.STRING)
+    private CompensationOption compensationOption;
 
     private String registerPrice;
 

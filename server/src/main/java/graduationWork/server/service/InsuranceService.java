@@ -1,6 +1,8 @@
 package graduationWork.server.service;
 
 import graduationWork.server.domain.Insurance;
+import graduationWork.server.domain.User;
+import graduationWork.server.dto.CompensationApplyForm;
 import graduationWork.server.dto.InsuranceCreateForm;
 import graduationWork.server.enumurate.InsuranceStatus;
 import graduationWork.server.enumurate.InsuranceType;

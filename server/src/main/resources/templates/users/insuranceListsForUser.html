@@ -39,8 +39,8 @@
                 <td th:text="${userInsurance.registerPrice}">보험료</td>
                 <td th:text="${userInsurance.insurance.formattedCoverageLimit}">보상 한도</td>
                 <td>
-                    <form th:action="@{/insurance/compensation/apply}" method="post">
-                        <input type="hidden" th:name="insuranceId" th:value="${userInsurance.id}" />
+                    <form th:action="@{/insurance/compensation/apply}" method="get">
+                        <input type="hidden" name="userInsuranceId" th:value="${userInsurance.id}" />
                         <button class="btn btn-primary" type="submit">보상 신청</button>
                     </form>
                 </td>

@@ -1,6 +1,12 @@
 package graduationWork.server.repository;
 
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import graduationWork.server.domain.Insurance;
+import graduationWork.server.domain.QUserInsurance;
+import graduationWork.server.domain.UserInsurance;
+import graduationWork.server.dto.InsuranceSearch;
+import graduationWork.server.enumurate.CompensationOption;
 import graduationWork.server.enumurate.InsuranceStatus;
 import graduationWork.server.enumurate.InsuranceType;
 import jakarta.persistence.EntityManager;
@@ -9,6 +15,8 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+
+
 
 /**
  * 보험 저장
@@ -55,5 +63,5 @@ public class InsuranceRepository {
                 .getResultList();
     }
 
-    //동적 쿼리로 해야할듯 ByStatus 이런건..
+
 }

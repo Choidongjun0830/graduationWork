@@ -2,6 +2,7 @@ package graduationWork.server.controller;
 
 import graduationWork.server.domain.Insurance;
 import graduationWork.server.domain.User;
+import graduationWork.server.dto.InsuranceSearch;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,9 +17,9 @@ public class adminController {
 
     //보험 보상 신청 리스트
     @GetMapping("/insurance/admin/compensation/requests")
-    public String compensationRequests(@ModelAttribute Insurance insurances, HttpSession session) {
+    public String compensationRequests(@ModelAttribute InsuranceSearch insuranceSearch, HttpSession session) {
         checkRole(session);
-        return "board/compensationRequests";
+        return "insurance/userInsuranceListForAdmin";
     }
 
     private static void checkRole(HttpSession session) {

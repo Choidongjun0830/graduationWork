@@ -108,7 +108,6 @@ public class InsuranceController {
         }
 
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
-        log.info(userInsurance.toString());
 
         model.addAttribute("userInsurance", userInsurance);
 
@@ -116,10 +115,26 @@ public class InsuranceController {
     }
 
     @GetMapping("insurance/compensation/apply")
-    public String compensationApply(@ModelAttribute CompensationApplyForm form, HttpSession session) {
+    public String compensationForm(@RequestParam Long userInsuranceId, Model model, HttpSession session) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
+
+        CompensationApplyForm form = new CompensationApplyForm();
+        form.setEmail(loginUser.getEmail());
+
+        model.addAttribute("form", form);
+        model.addAttribute("userInsurance", userInsurance);
+
         return "insurance/compensationApply";
     }
 
+    @PostMapping("insurance/compensation/apply")
+    public String compensationApply(@RequestParam Long userInsuranceId, @ModelAttribute CompensationApplyForm form, HttpSession session) {
+        User loginUser = (User) session.getAttribute("loginUser");
+        userInsuranceService.applyCompensation(userInsuranceId, loginUser.getId(), form);
+        //관리자 페이지에서 보상 모두 보기 만들어라
+        return "redirect:/user/insurances";
+    }
 
 
 }

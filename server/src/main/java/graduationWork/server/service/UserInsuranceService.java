@@ -4,6 +4,9 @@ import graduationWork.server.domain.Insurance;
 import graduationWork.server.domain.NumberUtils;
 import graduationWork.server.domain.User;
 import graduationWork.server.domain.UserInsurance;
+import graduationWork.server.dto.CompensationApplyForm;
+import graduationWork.server.dto.InsuranceSearch;
+import graduationWork.server.enumurate.CompensationOption;
 import graduationWork.server.enumurate.CompensationStatus;
 import graduationWork.server.enumurate.InsuranceStatus;
 import graduationWork.server.repository.InsuranceRepository;
@@ -58,6 +61,28 @@ public class UserInsuranceService {
         return userInsuranceRepository.save(userInsurance);
     }
 
+    @Transactional
+    public Boolean applyCompensation(Long userInsuranceId, Long userId, CompensationApplyForm form) {
+        UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
+
+        LocalDate startDate = userInsurance.getStartDate();
+        LocalDate endDate = userInsurance.getEndDate();
+        LocalDate occurrenceDate = form.getOccurrenceDate();
+
+        if((occurrenceDate.isBefore(endDate) || occurrenceDate.isEqual(endDate)) && (occurrenceDate.isAfter(startDate) || occurrenceDate.isEqual(startDate))) {
+            CompensationOption option = form.getCompensationOption();
+            if(option == CompensationOption.OPTION_EMAIL) {
+                userInsurance.setCompensationStatus(CompensationStatus.COMPENSATING);
+            } else if (option == CompensationOption.OPTION_AUTO) {
+                userInsurance.setCompensationStatus(CompensationStatus.COMPENSATED);
+            }
+        } else{
+            userInsurance.setCompensationStatus(CompensationStatus.IMPOSSIBLE);
+            return false;
+        }
+        return true;
+    }
+
     public UserInsurance findOne(Long id) {
         return userInsuranceRepository.findById(id);
     }
@@ -69,5 +94,9 @@ public class UserInsuranceService {
 
     public List<UserInsurance> findAll() {
         return userInsuranceRepository.findAll();
+    }
+
+    public List<UserInsurance> findAllUserInsurances(InsuranceSearch insuranceSearch) {
+        return userInsuranceRepository.findAllUserInsurances(insuranceSearch);
     }
 }

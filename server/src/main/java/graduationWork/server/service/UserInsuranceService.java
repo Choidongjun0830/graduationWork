@@ -1,7 +1,7 @@
 package graduationWork.server.service;
 
 import graduationWork.server.domain.Insurance;
-import graduationWork.server.domain.NumberUtils;
+import graduationWork.server.utils.NumberUtils;
 import graduationWork.server.domain.User;
 import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.dto.CompensationApplyForm;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -80,7 +80,21 @@ public class UserInsuranceService {
             userInsurance.setCompensationStatus(CompensationStatus.IMPOSSIBLE);
             return false;
         }
+        userInsurance.setOccurrenceDate(form.getOccurrenceDate());
+        userInsurance.setReason(form.getReason());
+        userInsurance.setApplyDate(LocalDate.now());
         return true;
+    }
+
+    @Transactional
+    public void setCompensationAmount(Long userInsuranceId) {
+        UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
+        String reason = userInsurance.getReason();
+
+        Map<String, String> details = insuranceRepository.findDetails(userInsurance.getId());
+        userInsurance.setCompensationAmount(details.get(reason));
+
+        log.info(userInsurance.getCompensationAmount());
     }
 
     public UserInsurance findOne(Long id) {
@@ -97,6 +111,11 @@ public class UserInsuranceService {
     }
 
     public List<UserInsurance> findAllUserInsurances(InsuranceSearch insuranceSearch) {
-        return userInsuranceRepository.findAllUserInsurances(insuranceSearch);
+        CompensationStatus compensationStatus = insuranceSearch.getCompensationStatus();
+
+        String insuranceName = insuranceSearch.getInsuranceName();
+        String username = insuranceSearch.getUsername();
+        CompensationOption option = insuranceSearch.getCompensationOption();
+        return userInsuranceRepository.findAllUserInsurances(username, insuranceName, compensationStatus, option);
     }
 }

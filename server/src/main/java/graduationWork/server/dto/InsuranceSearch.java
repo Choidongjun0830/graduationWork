@@ -1,6 +1,8 @@
 package graduationWork.server.dto;
 
 import graduationWork.server.enumurate.CompensationOption;
+import graduationWork.server.enumurate.CompensationStatus;
+import graduationWork.server.enumurate.CompensationType;
 import graduationWork.server.enumurate.InsuranceType;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,5 +18,5 @@ public class InsuranceSearch {
     private CompensationOption compensationOption;
 
     @Enumerated(EnumType.STRING)
-    private InsuranceType insuranceType;
+    private CompensationStatus compensationStatus;
 }

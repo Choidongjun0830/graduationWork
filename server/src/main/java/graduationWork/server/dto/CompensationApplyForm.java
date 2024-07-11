@@ -19,6 +19,8 @@ public class CompensationApplyForm {
     @Enumerated(EnumType.STRING)
     private CompensationOption compensationOption;
 
+    private LocalDate applyDate;
+
     @Override
     public String toString() {
         return "CompensationApplyForm{" +

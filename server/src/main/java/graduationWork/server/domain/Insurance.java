@@ -3,10 +3,15 @@ package graduationWork.server.domain;
 import graduationWork.server.enumurate.CompensationStatus;
 import graduationWork.server.enumurate.InsuranceStatus;
 import graduationWork.server.enumurate.InsuranceType;
+import graduationWork.server.utils.InsuranceUtils;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Entity
 @Getter @Setter
@@ -14,21 +19,34 @@ public class Insurance { //유저에게 가입된 보험 정보를 나타내는 
     @Id @GeneratedValue
     @Column(name = "insurance_id")
     private Long id;
-
     private String name;
-
-    //보험료
     private int premium;
     private String formattedPremium;
-
-    //보상 한도
-    private int coverageLimit;
-    private String formattedCoverageLimit;
-
     private InsuranceType insuranceType;
 
     //보장 내역
-    private List<String> coverageDetails;
+    @ElementCollection(fetch = FetchType.EAGER)
+    private List<String> coverageDetails = new ArrayList<>();
+
+    @Transient
+    private Map<String, String> coverageMap;
+
+    @PostLoad
+    @PostPersist
+    public void initCoverageMap() {
+        coverageMap = new HashMap<>();
+        for(String detail: coverageDetails) {
+            Map<String, String> nameAmount = InsuranceUtils.getCoverageNameAmount(detail);
+            if(nameAmount != null) {
+                coverageMap.put(nameAmount.get("name"), nameAmount.get("amount"));
+            }
+        }
+    }
+
+    public String getCoverageAmount(String coverageName) {
+        String amount = coverageMap.get(coverageName);
+        return amount != null ? amount : null;
+    }
 
     @Override
     public String toString() {
@@ -36,8 +54,8 @@ public class Insurance { //유저에게 가입된 보험 정보를 나타내는 
                 "name='" + name + '\'' +
                 ", premium=" + premium +
                 ", formattedPremium='" + formattedPremium + '\'' +
-                ", coverageLimit=" + coverageLimit +
-                ", formattedCoverageLimit='" + formattedCoverageLimit + '\'' +
+//                ", coverageLimit=" + coverageLimit +
+//                ", formattedCoverageLimit='" + formattedCoverageLimit + '\'' +
                 ", insuranceType=" + insuranceType +
                 '}';
     }

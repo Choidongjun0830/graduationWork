@@ -2,30 +2,83 @@ package graduationWork.server.controller;
 
 import graduationWork.server.domain.Insurance;
 import graduationWork.server.domain.User;
+import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.dto.InsuranceSearch;
+import graduationWork.server.email.service.EmailService;
+import graduationWork.server.enumurate.CompensationStatus;
+import graduationWork.server.service.UserInsuranceService;
+import graduationWork.server.service.UserService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.nio.file.AccessDeniedException;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
 @Slf4j
 public class adminController {
 
+    private final UserService userService;
+    private final UserInsuranceService userInsuranceService;
+    private final EmailService emailService;
+
     //보험 보상 신청 리스트
     @GetMapping("/insurance/admin/compensation/requests")
-    public String compensationRequests(@ModelAttribute InsuranceSearch insuranceSearch, HttpSession session) {
+    public String compensationRequests(@ModelAttribute InsuranceSearch insuranceSearch, HttpSession session, Model model) throws AccessDeniedException {
         checkRole(session);
-        return "insurance/userInsuranceListForAdmin";
+
+        log.info("Insurance search: " + insuranceSearch.toString());
+
+        List<UserInsurance> userInsurances = userInsuranceService.findAllUserInsurances(insuranceSearch);
+
+        for (UserInsurance userInsurance : userInsurances) {
+            log.info(userInsurance.toString());
+        }
+
+        model.addAttribute("userInsurances", userInsurances);
+
+        return "admin/userInsuranceListForAdmin";
     }
 
-    private static void checkRole(HttpSession session) {
+    @GetMapping("/insurance/admin/compensation/manage")
+    public String compensationManage(@RequestParam Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
+        checkRole(session);
+
+        UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
+        log.info(userInsurance.toString());
+        model.addAttribute("userInsurance", userInsurance);
+        UserInsurance userInsurance1 = (UserInsurance) model.getAttribute("userInsurance");
+        log.info(userInsurance1.toString());
+        return "admin/compensationManage";
+    }
+
+    @PostMapping("/insurance/admin/sendCompensationMail")
+    public String sendCompensationMail(@RequestParam("userInsuranceId") Long userInsuranceId, Model model) throws MessagingException {
+
+        UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
+        userInsuranceService.setCompensationAmount(userInsuranceId);
+
+        String sub = "보험 보상 진행을 위한 메일 전송";
+        emailService.sendCompensationEmail(userInsuranceId, sub);
+
+        model.addAttribute("message", "이메일이 성공적으로 전송되었습니다.");
+        model.addAttribute("userInsurance", userInsurance);
+
+        return "admin/compensationEmailSuccess";
+    }
+
+    public static void checkRole(HttpSession session) throws AccessDeniedException {
         User loginUser = (User) session.getAttribute("loginUser");
-        if (loginUser.getRole() != "ROLE_ADMIN") {
-            //예외 처리
+        if (!"ROLE_ADMIN".equals(loginUser.getRole())) {
+            // 예외 처리
+            throw new AccessDeniedException("Access Denied: You do not have permission to access this page.");
         }
     }
 }

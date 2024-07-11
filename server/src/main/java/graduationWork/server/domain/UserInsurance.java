@@ -1,5 +1,6 @@
 package graduationWork.server.domain;
 
+import graduationWork.server.dto.CompensationApplyForm;
 import graduationWork.server.enumurate.CompensationOption;
 import graduationWork.server.enumurate.CompensationStatus;
 import graduationWork.server.enumurate.InsuranceStatus;
@@ -46,6 +47,14 @@ public class UserInsurance {
     private CompensationOption compensationOption;
 
     private String registerPrice;
+
+    private String reason;
+
+    private LocalDate occurrenceDate;
+
+    private LocalDate applyDate;
+
+    private String compensationAmount;
 
     //지급 내역
 

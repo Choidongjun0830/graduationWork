@@ -1,5 +1,6 @@
 package graduationWork.server.repository;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -8,6 +9,7 @@ import graduationWork.server.domain.User;
 import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.dto.InsuranceSearch;
 import graduationWork.server.enumurate.CompensationOption;
+import graduationWork.server.enumurate.CompensationStatus;
 import graduationWork.server.enumurate.InsuranceType;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -48,44 +50,35 @@ public class UserInsuranceRepository {
                 .getResultList();
     }
 
-    public List<UserInsurance> findAllUserInsurances(InsuranceSearch insuranceSearch) {
+    public List<UserInsurance> findAllUserInsurances(String usernameCond, String insuranceNameCond, CompensationStatus  statusCond, CompensationOption optionCond) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
-        QUserInsurance ui = new QUserInsurance("ui");
 
-        String insuranceNameCond = insuranceSearch.getInsuranceName();
-        String usernameCond = insuranceSearch.getUsername();
-        CompensationOption optionCond = insuranceSearch.getCompensationOption();
-        InsuranceType insuranceTypeCond = insuranceSearch.getInsuranceType();
-
-        List<UserInsurance> results = queryFactory
-                .select(ui)
-                .from(ui)
-                .join(ui.insurance, insurance)
-                .join(ui.user, user)
+        return queryFactory
+                .selectFrom(userInsurance)
+                .join(userInsurance.insurance, insurance)
+                .join(userInsurance.user, user)
                 .where(
                         usernameEq(usernameCond),
                         insuranceNameEq(insuranceNameCond),
                         compensationOptionEq(optionCond),
-                        insuranceTypeEq(insuranceTypeCond)
+                        compensationStatusEq(statusCond)
                         )
                 .fetch();
-
-        return results;
     }
 
     private BooleanExpression usernameEq(String usernameCond) {
-        return usernameCond != null ? user.username.eq(usernameCond) : Expressions.TRUE;
+        return usernameCond != null ? user.username.eq(usernameCond) : null;
     }
 
     private BooleanExpression insuranceNameEq(String insuranceNameCond) {
-        return insuranceNameCond != null ? insurance.name.eq(insuranceNameCond) : Expressions.TRUE;
+        return insuranceNameCond != null ? insurance.name.eq(insuranceNameCond) : null;
     }
 
     private BooleanExpression compensationOptionEq(CompensationOption compensationOptionCond) {
-        return compensationOptionCond != null ? userInsurance.compensationOption.eq(compensationOptionCond) : Expressions.TRUE;
+        return compensationOptionCond != null ? userInsurance.compensationOption.eq(compensationOptionCond) : null;
     }
 
-    private BooleanExpression insuranceTypeEq(InsuranceType insuranceTypeCond) {
-        return insuranceTypeCond != null ? insurance.insuranceType.eq(insuranceTypeCond) : Expressions.TRUE;
+    private BooleanExpression compensationStatusEq(CompensationStatus statusCond) {
+        return statusCond != null ? userInsurance.compensationStatus.eq(statusCond) : null;
     }
 }

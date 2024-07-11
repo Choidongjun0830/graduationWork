@@ -8,11 +8,13 @@ import graduationWork.server.enumurate.InsuranceStatus;
 import graduationWork.server.enumurate.InsuranceType;
 import graduationWork.server.repository.InsuranceRepository;
 import graduationWork.server.repository.UserRepository;
+import graduationWork.server.utils.InsuranceUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +29,6 @@ public class InsuranceService {
         Insurance insurance = new Insurance();
         insurance.setName(insuranceCreateForm.getName());
         insurance.setPremium(insuranceCreateForm.getPremium());
-        insurance.setCoverageLimit(insuranceCreateForm.getCoverageLimit());
         insurance.setInsuranceType(insuranceCreateForm.getInsuranceType());
 
         return insuranceRepository.save(insurance);
@@ -47,5 +48,10 @@ public class InsuranceService {
 
     public List<Insurance> findAllInsurancesByType(InsuranceType type) {
         return insuranceRepository.findAllOfInsuranceType(type);
+    }
+
+    public String findCoverageAmount(Long insuranceId ,String coverageName) {
+        Insurance insurance = insuranceRepository.findById(insuranceId);
+        return insurance.getCoverageAmount(coverageName);
     }
 }

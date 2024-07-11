@@ -1,4 +1,4 @@
-package graduationWork.server.domain;
+package graduationWork.server.utils;
 
 import java.text.DecimalFormat;
 

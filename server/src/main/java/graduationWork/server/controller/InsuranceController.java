@@ -124,6 +124,7 @@ public class InsuranceController {
 
         model.addAttribute("form", form);
         model.addAttribute("userInsurance", userInsurance);
+        model.addAttribute("coverageMap", userInsurance.getInsurance().getCoverageMap());
 
         return "insurance/compensationApply";
     }
@@ -132,7 +133,6 @@ public class InsuranceController {
     public String compensationApply(@RequestParam Long userInsuranceId, @ModelAttribute CompensationApplyForm form, HttpSession session) {
         User loginUser = (User) session.getAttribute("loginUser");
         userInsuranceService.applyCompensation(userInsuranceId, loginUser.getId(), form);
-        //관리자 페이지에서 보상 모두 보기 만들어라
         return "redirect:/user/insurances";
     }
 

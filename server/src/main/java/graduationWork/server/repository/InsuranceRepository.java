@@ -14,8 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Map;
 
 
 /**
@@ -61,6 +62,11 @@ public class InsuranceRepository {
         return em.createQuery("select i from Insurance i where i.status = :status")
                 .setParameter("status", status)
                 .getResultList();
+    }
+
+    public Map<String, String> findDetails(Long insuranceId) {
+        Insurance insurance = em.find(Insurance.class, insuranceId);
+        return insurance != null ? insurance.getCoverageMap() : null;
     }
 
 

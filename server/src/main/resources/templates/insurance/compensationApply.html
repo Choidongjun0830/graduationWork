@@ -18,9 +18,7 @@
     </div>
     <select class="form-select" aria-label="Default select example" th:field="*{reason}">
       <option value="" selected>신청 사유</option>
-      <option value="지연">항공기 지연</option>
-      <option value="분실">분실 사고</option>
-      <option value="상해">상해 사고</option>
+      <option th:each="entry: ${coverageMap.entrySet()}" th:value="${entry.key}" th:text="${entry.key}"></option>
     </select>
     <div class="mb-3">
       <label for="occurrenceDate" class="form-label">발생 일자</label>

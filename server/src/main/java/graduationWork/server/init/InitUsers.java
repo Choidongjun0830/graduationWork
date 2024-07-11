@@ -32,7 +32,7 @@ public class InitUsers {
 
         public void dbInit1() {
             User user = new User();
-            user.setUsername("admin");
+            user.setUsername("관리자");
             user.setLoginId("adong08");
             user.setPassword(passwordEncoder.encode("adong08","1111"));
             user.setRole("ROLE_ADMIN");
@@ -43,11 +43,11 @@ public class InitUsers {
 
         public void dbInit2() {
             User user = new User();
-            user.setUsername("user");
+            user.setUsername("최동준");
             user.setLoginId("adong0808");
             user.setPassword(passwordEncoder.encode("adong0808","1111"));
             user.setRole("ROLE_USER");
-            user.setEmail("qweqweqwe@naver.com");
+            user.setEmail("adong0808@naver.com");
             user.setJoinDate(LocalDate.now());
             em.persist(user);
         }

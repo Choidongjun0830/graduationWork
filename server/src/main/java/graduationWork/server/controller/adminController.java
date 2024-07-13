@@ -1,6 +1,7 @@
 package graduationWork.server.controller;
 
 import graduationWork.server.domain.Insurance;
+import graduationWork.server.domain.UploadFile;
 import graduationWork.server.domain.User;
 import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.dto.InsuranceSearch;
@@ -12,6 +13,8 @@ import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -46,6 +49,18 @@ public class adminController {
 
         return "admin/userInsuranceListForAdmin";
     }
+
+//    @GetMapping("/insurance/admin/compensation/download")
+//    public ResponseEntity<Resource> downloadFile(@RequestParam Long userInsuranceId, @RequestParam String filename) {
+//        UploadFile uploadFile = userInsuranceService.getUploadFile(userInsuranceId, filename);
+//        Resource resource = fileStore.loadFileAsResource(uploadFile.getStoreFileName());
+//
+//        return ResponseEntity.ok()
+//                .contentType(MediaType.parseMediaType("application/octet-stream"))
+//                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + uploadFile.getOriginalFilename() + "\"")
+//                .body(resource);
+//    }
+
 
     @GetMapping("/insurance/admin/compensation/manage")
     public String compensationManage(@RequestParam Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {

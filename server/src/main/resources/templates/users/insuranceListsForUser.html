@@ -3,12 +3,16 @@
 <head th:replace="fragments/header :: header"/>
 <title>졸업 작품</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <style>
-        .table td, .table th {
-            vertical-align: middle;
-            text-align: center;
-        }
-    </style>
+<style>
+    .table td, .table th {
+        vertical-align: middle;
+        text-align: center;
+    }
+    .apply-btn {
+        width: 100%;
+        padding: 8px;
+    }
+</style>
 <body>
 <div class="container" style="max-width: 60%">
     <div class="py-5 text-center">
@@ -34,11 +38,12 @@
             <td th:text="${userInsurance.endDate}">만료일</td>
             <td th:text="${userInsurance.compensationStatus}">상태</td>
             <td th:text="${userInsurance.registerPrice}">보험료</td>
-            <td th:if="${userInsurance.compensationStatus.name() == 'NOT_SUBMITTED'}">
-                <form th:action="@{/insurance/compensation/apply}" method="get">
+            <td>
+                <form th:action="@{/insurance/compensation/apply}" method="get" th:if="${userInsurance.compensationStatus.name() == 'NOT_SUBMITTED'}">
                     <input type="hidden" name="userInsuranceId" th:value="${userInsurance.id}" />
-                    <button class="btn btn-primary" type="submit">보상 신청</button>
+                    <button class="btn btn-primary apply-btn" type="submit">보상 신청</button>
                 </form>
+                <span th:if="${userInsurance.compensationStatus.name() != 'NOT_SUBMITTED'}">신청 완료</span>
             </td>
         </tr>
         </tbody>

@@ -68,7 +68,7 @@ public class UserService {
 
     @Transactional
     public void updateWalletAccount(User user, Wallet wallet) {
-        user.updateWallet(wallet);
-        userRepository.save(user);
+        user.setWallet(wallet);
+        wallet.setUser(user);
     }
 }

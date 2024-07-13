@@ -16,9 +16,6 @@ public class CompensationApplyForm {
 
     private LocalDate occurrenceDate; //발생 일자
 
-    @Enumerated(EnumType.STRING)
-    private CompensationOption compensationOption;
-
     private LocalDate applyDate;
 
     @Override
@@ -27,7 +24,6 @@ public class CompensationApplyForm {
                 "email='" + email + '\'' +
                 ", reason='" + reason + '\'' +
                 ", occurrenceDate=" + occurrenceDate +
-                ", compensationOption=" + compensationOption +
                 '}';
     }
 }

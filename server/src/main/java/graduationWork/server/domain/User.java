@@ -49,8 +49,8 @@ public class User {
 //    @NotEmpty(message = "주소는 필수 입니다.")
     private Address address;
 
-    @OneToMany(mappedBy = "user")
-    private List<Ticket> ticket = new ArrayList<>();
+//    @OneToMany(mappedBy = "user")
+//    private List<Flight> flights = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "wallet_id")

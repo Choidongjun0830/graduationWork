@@ -55,10 +55,8 @@
                     <p class="card-text">신청 사유: <span th:text="${userInsurance?.reason}">Reason</span></p>
                     <p class="card-text">발생 일: <span th:text="${userInsurance?.occurrenceDate}">OccurrenceDate</span></p>
                     <p class="card-text">가입 보험료: <span th:text="${userInsurance?.registerPrice}">RegisterPrice</span></p>
+                    <p class="card-text">보상 금액: <span th:text="${userInsurance?.compensationAmount}">RegisterPrice</span></p>
 
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item" th:each="detail : ${userInsurance?.insurance?.coverageDetails}" th:text="${detail}">Coverage Detail</li>
-                    </ul>
                     <form th:action="@{/insurance/admin/compensation/requests}" method="get">
                         <button type="submit" class="btn btn-primary btn-email">보험 신청 리스트로</button>
                     </form>

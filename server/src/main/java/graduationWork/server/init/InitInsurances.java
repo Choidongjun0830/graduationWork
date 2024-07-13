@@ -36,15 +36,14 @@ public class InitInsurances {
             insurance.setName("국내 여행-Basic");
             insurance.setPremium(5000);
             insurance.setFormattedPremium("5,000원");
-//            insurance.setCoverageLimit(1000000);
-//            insurance.setFormattedCoverageLimit("1,000,000원");
             insurance.setInsuranceType(InsuranceType.DOMESTIC);
             insurance.setCoverageDetails(Arrays.asList(
                     "국내의료비_상해 (급여) - 3천만원",
                     "국내의료비_상해 (비급여) - 3천만원",
                     "국내의료비_질병 (급여) - 3천만원",
                     "국내의료비_질병 (비급여) - 3천만원",
-                    "국내의료비_3대 비급여 - 350만원"
+                    "국내의료비_3대 비급여 - 350만원",
+                    "항공기 및 수하물 지연 보상 - 7만원"
             ));
             em.persist(insurance);
         }
@@ -54,15 +53,14 @@ public class InitInsurances {
             insurance.setName("국내 여행-Premium");
             insurance.setPremium(8000);
             insurance.setFormattedPremium("8,000원");
-//            insurance.setCoverageLimit(3000000);
-//            insurance.setFormattedCoverageLimit("3,000,000원");
             insurance.setInsuranceType(InsuranceType.DOMESTIC);
             insurance.setCoverageDetails(Arrays.asList(
                     "국내의료비_상해 (급여) - 5천만원",
                     "국내의료비_상해 (비급여) - 5천만원",
                     "국내의료비_질병 (급여) - 5천만원",
                     "국내의료비_질병 (비급여) - 5천만원",
-                    "국내의료비_3대 비급여 - 500만원"
+                    "국내의료비_3대 비급여 - 500만원",
+                    "항공기 및 수하물 지연 보상 - 10만원"
             ));
             em.persist(insurance);
         }
@@ -72,8 +70,6 @@ public class InitInsurances {
             insurance.setName("해외 여행-Basic");
             insurance.setPremium(6000);
             insurance.setFormattedPremium("6,000원");
-//            insurance.setCoverageLimit(1000000);
-//            insurance.setFormattedCoverageLimit("1,000,000원");
             insurance.setInsuranceType(InsuranceType.OVERSEAS);
             insurance.setCoverageDetails(Arrays.asList(
                     "해외여행 중 상해,사망,후유장해 - 2억원",
@@ -98,8 +94,6 @@ public class InitInsurances {
             insurance.setName("해외 여행-Premium");
             insurance.setPremium(10000);
             insurance.setFormattedPremium("10,000원");
-//            insurance.setCoverageLimit(3000000);
-//            insurance.setFormattedCoverageLimit("3,000,000원");
             insurance.setInsuranceType(InsuranceType.OVERSEAS);
             insurance.setCoverageDetails(Arrays.asList(
                     "해외여행 중 상해,사망,후유장해 - 2.5억원",

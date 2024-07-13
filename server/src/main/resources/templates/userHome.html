@@ -25,7 +25,7 @@
     <div class="py-5 text-center">
         <h2>간단 보상 조회</h2>
     </div>
-    <form th:action="@{/insurance/search}" th:object="${insuranceSearchForm}" method="post">
+    <form th:action="@{/insurance/search}" th:object="${flightCompensationApplyForm}" method="post">
         <div class="mb-3">
             <label for="flightNumber" class="form-label">항공기 번호</label>
             <input type="text" class="form-control" id="flightNumber" name="flightNumber" th:field="*{flightNum}" required>

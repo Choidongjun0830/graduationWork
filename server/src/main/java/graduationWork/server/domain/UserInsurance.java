@@ -1,6 +1,5 @@
 package graduationWork.server.domain;
 
-import graduationWork.server.dto.CompensationApplyForm;
 import graduationWork.server.enumurate.CompensationOption;
 import graduationWork.server.enumurate.CompensationStatus;
 import graduationWork.server.enumurate.InsuranceStatus;
@@ -9,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter @Setter
@@ -55,6 +55,9 @@ public class UserInsurance {
     private LocalDate applyDate;
 
     private String compensationAmount;
+
+    @OneToMany(mappedBy = "userInsurance")
+    private List<UploadFile> files;
 
     //지급 내역
 

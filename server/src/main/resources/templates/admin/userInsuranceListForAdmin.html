@@ -3,80 +3,123 @@
 <head th:replace="fragments/header :: header"/>
 <title>졸업 작품</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <style>
-  .form-inline .form-control, .form-inline button {
-    margin-right: 10px;
-    flex: 1;
-  }
-  .form-inline button {
-    width: auto;
-  }
   .table td, .table th {
     vertical-align: middle;
     text-align: center;
   }
+  .apply-btn {
+    width: 100%;
+    padding: 8px;
+  }
+  .file-list {
+    display: none;
+  }
+  .form-container {
+    display: flex;
+    flex-wrap: wrap;
+  }
+  .form-container .form-group {
+    flex: 1 1 auto;
+    min-width: 150px;
+    margin-right: 10px;
+  }
+  .form-container .form-group:last-child {
+    margin-right: 0;
+  }
 </style>
+</head>
 <body>
-<div class="container" style="max-width: 60%">
+<div class="container" style="max-width: 90%">
   <div class="py-5 text-center">
     <h2>사용자 보험 정보</h2>
   </div>
-  <div>
-    <form th:object="${insuranceSearch}" class="form-inline d-flex justify-content-between">
-      <select th:field="*{insuranceName}" class="form-control">
-        <option value="">보험명</option>
-        <option value="국내 여행-Basic">국내 여행-Basic</option>
-        <option value="국내 여행-Premium">국내 여행-Premium</option>
-        <option value="해외 여행-Basic">해외 여행-Basic</option>
-        <option value="해외 여행-Premium">해외 여행-Premium</option>
-      </select>
-      <input type="text" th:field="*{username}" class="form-control" placeholder="회원명"/>
-      <select th:field="*{compensationOption}" class="form-control">
-        <option value="">보상 옵션</option>
-        <option value="OPTION_EMAIL">상담 후 결정</option>
-        <option value="OPTION_AUTO">자동</option>
-      </select>
-      <select th:field="*{compensationStatus}" class="form-control">
-        <option value="">보험 유형</option>
-        <option value="NOT_SUBMITTED">미신청</option>
-        <option value="POSSIBLE">신청 가능</option>
-        <option value="IMPOSSIBLE">신청 불가</option>
-        <option value="COMPENSATING">보상 진행중</option>
-        <option value="COMPENSATED">보상됨</option>
-      </select>
-      <button type="submit" class="btn btn-primary">검색</button>
+  <div class="mb-3">
+    <form th:object="${insuranceSearch}" class="form-container">
+      <div class="form-group">
+        <select th:field="*{insuranceName}" class="form-control">
+          <option value="">보험명</option>
+          <option value="국내 여행-Basic">국내 여행-Basic</option>
+          <option value="국내 여행-Premium">국내 여행-Premium</option>
+          <option value="해외 여행-Basic">해외 여행-Basic</option>
+          <option value="해외 여행-Premium">해외 여행-Premium</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <input type="text" th:field="*{username}" class="form-control" placeholder="회원명"/>
+      </div>
+      <div class="form-group">
+        <select th:field="*{compensationOption}" class="form-control">
+          <option value="">보상 옵션</option>
+          <option value="OPTION_EMAIL">상담 후 결정</option>
+          <option value="OPTION_AUTO">자동</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <select th:field="*{compensationStatus}" class="form-control">
+          <option value="">보험 유형</option>
+          <option value="NOT_SUBMITTED">미신청</option>
+          <option value="POSSIBLE">신청 가능</option>
+          <option value="IMPOSSIBLE">신청 불가</option>
+          <option value="COMPENSATING">보상 진행중</option>
+          <option value="COMPENSATED">보상됨</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <button type="submit" class="btn btn-primary">검색</button>
+      </div>
     </form>
   </div>
-  <table class="table table-striped text-center mt-4">
-    <thead>
-    <tr>
-      <th scope="col">#</th>
-      <th scope="col">보험명</th>
-      <th scope="col">회원명</th>
-      <th scope="col">회원 이메일</th>
-      <th scope="col">가입 보험료</th>
-      <th scope="col">신청일</th>
-      <th scope="col">보상 상태</th>
-      <th scope="col">관리</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="userInsurance : ${userInsurances}">
-      <td th:text="${userInsurance.id}"></td>
-      <td th:text="${userInsurance.insurance.name}"></td>
-      <td th:text="${userInsurance.user.username}"></td>
-      <td th:text="${userInsurance.user.email}"></td>
-      <td th:text="${userInsurance.registerPrice}"></td>
-      <td th:text="${userInsurance.registerDate}"></td>
-      <td th:text="${userInsurance.compensationStatus}"></td>
-      <td>
-        <a th:if="${userInsurance.compensationStatus.name() == 'COMPENSATING'}"
-           th:href="@{'/insurance/admin/compensation/manage?userInsuranceId=' + ${userInsurance.id}}"
-           class="btn btn-warning">보상 관리</a>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+  <div class="table-responsive">
+    <table class="table table-striped text-center mt-4">
+      <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">보험명</th>
+        <th scope="col">회원명</th>
+        <th scope="col">회원 이메일</th>
+        <th scope="col">가입 보험료</th>
+        <th scope="col">신청일</th>
+        <th scope="col">보상 상태</th>
+        <th scope="col">첨부 파일</th>
+        <th scope="col">관리</th>
+      </tr>
+      </thead>
+      <tbody>
+      <tr th:each="userInsurance : ${userInsurances}">
+        <td th:text="${userInsurance.id}"></td>
+        <td th:text="${userInsurance.insurance.name}"></td>
+        <td th:text="${userInsurance.user.username}"></td>
+        <td th:text="${userInsurance.user.email}"></td>
+        <td th:text="${userInsurance.registerPrice}"></td>
+        <td th:text="${userInsurance.registerDate}"></td>
+        <td th:text="${userInsurance.compensationStatus}"></td>
+        <td>
+          <button class="btn btn-link" type="button" data-toggle="collapse" th:attr="data-target='#fileList-' + ${userInsurance.id}">
+            첨부 파일 보기
+          </button>
+          <div th:id="'fileList-' + ${userInsurance.id}" class="collapse">
+            <ul class="list-unstyled">
+              <li th:each="file : ${userInsurance.files}">
+                <a th:href="@{'/download/files/' + ${file.id}}" th:text="${file.uploadFileName}">파일명</a>
+              </li>
+            </ul>
+          </div>
+        </td>
+        <td>
+          <a th:if="${userInsurance.compensationStatus.name() == 'COMPENSATING'}"
+             th:href="@{'/insurance/admin/compensation/manage?userInsuranceId=' + ${userInsurance.id}}"
+             class="btn btn-warning apply-btn">보상 관리</a>
+        </td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

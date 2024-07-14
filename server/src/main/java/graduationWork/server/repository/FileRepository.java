@@ -18,4 +18,15 @@ public class FileRepository {
         em.persist(file);
         return file.getId();
     }
+
+    public Long findByUploadName(String uploadName) {
+        UploadFile uploadName1 = (UploadFile) em.createQuery("select f from UploadFile f where f.uploadName = :uploadName")
+                .setParameter("uploadName", uploadName)
+                .getSingleResult();
+        return uploadName1.getId();
+    }
+
+    public UploadFile findById(Long id) {
+        return em.find(UploadFile.class, id);
+    }
 }

@@ -16,4 +16,8 @@ public class FileService {
     public void save(UploadFile file) {
         fileRepository.save(file);
     }
+
+    public UploadFile findById(Long id) {
+        return fileRepository.findById(id);
+    }
 }

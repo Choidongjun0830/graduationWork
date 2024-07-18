@@ -19,24 +19,24 @@
         <h2>회원가입</h2>
     </div>
     <h4 class="mb-3">회원 가입 정보 입력</h4>
-    <form action = "" th:action th:object="${user}" method="post">
+    <form th:action="@{/join}" th:object="${user}" method="post" novalidate>
         <div class="mb-3">
             <label for="name" class="form-label">이름</label>
             <input class="form-control" id="name" th:field="*{username}"
                    th:errorclass="field-error" placeholder="이름">
-            <div class="field-error" th:errors="*{username}">이름 입력 오류</div>
+            <div class="field-error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">이름 입력 오류</div>
         </div>
         <div class="mb-3">
             <label for="inputLoginId" class="form-label">아이디</label>
             <input type="text" class="form-control" id="inputLoginId" th:field="*{loginId}"
                    th:errorclass="field-error" placeholder="아이디">
-            <div class="field-error" th:errors="*{loginId}">로그인 아이디 입력 오류</div>
+            <div class="field-error" th:if="${#fields.hasErrors('loginId')}" th:errors="*{loginId}">로그인 아이디 입력 오류</div>
         </div>
         <div class="mb-3">
             <label for="inputPassword5" class="form-label">비밀번호</label>
             <input type="password" id="inputPassword5" class="form-control" aria-describedby="passwordHelpBlock"
                    th:field="*{password}" th:errorclass="field-error" placeholder="비밀번호">
-            <div class="field-error" th:errors="*{password}"></div>
+            <div class="field-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
             <div id="passwordHelpBlock" class="form-text">
                 비밀번호는 8-20의 길이로, 문자와 숫자, 특수 문자를 포함해야 합니다. 공백이나 이모티콘이 들어가서는 안됩니다.
             </div>
@@ -45,14 +45,8 @@
             <label for="inputEmail" class="form-label">이메일</label>
             <input type="email" id="inputEmail" class="form-control"
                    th:field="*{email}" th:errorclass="field-error" placeholder="이메일">
-            <div class="field-error" th:errors="*{email}"></div>
+            <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
         </div>
-<!--        <div class="mb-3">-->
-<!--            <label for="exampleFormControlInput1" class="form-label">닉네임</label>-->
-<!--            <input class="form-control" id="nickname" th:field="*{address}"-->
-<!--                   th:errorclass="field-error" placeholder="Nickname">-->
-<!--            <div class="field-error" th:errors="*{address}">닉네임 입력 오류</div>-->
-<!--        </div>-->
         <hr class="my-4">
         <div class="row">
             <div class="col m">

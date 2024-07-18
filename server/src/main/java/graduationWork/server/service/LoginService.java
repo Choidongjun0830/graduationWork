@@ -20,21 +20,6 @@ public class LoginService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-//    private final BCryptPasswordEncoder bCryptPasswordEncoder;
-
-//    public User login(String loginId, String password) {
-//        User findUser = userRepository.findByLoginId(loginId);
-//        if (findUser == null) {
-//            return null;
-//        }
-//
-//        String userPassword = findUser.getPassword();
-//        if(bCryptPasswordEncoder.matches(password, userPassword)) {
-//            return findUser;
-//        } else {
-//            return null;
-//        }
-//    }
 
     public User login(String loginId, String password) {
         User findUser = userRepository.findByLoginId(loginId);

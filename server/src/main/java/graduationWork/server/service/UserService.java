@@ -41,28 +41,35 @@ public class UserService {
         return user.getId();
     }
 
-    private User findOne(Long id) {
+    public User findOne(Long id) {
         return userRepository.findById(id);
     }
 
-    private List<User> findAll() {
+    public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    @Transactional
-    public boolean updatePassword(User user, PasswordUpdateForm passwordUpdateForm) {
-        String findUserLoginId = user.getLoginId();
+    public User findByLoginId(String loginId) {
+        return userRepository.findByLoginId(loginId);
+    }
 
-        if(!passwordEncoder.matches(findUserLoginId, passwordUpdateForm.getCurrentPassword(), user.getPassword())) {
+    @Transactional
+    public boolean updatePassword(Long userId, PasswordUpdateForm passwordUpdateForm) {
+
+        User user = userRepository.findById(userId);
+        String loginId = user.getLoginId();
+
+        if(!passwordEncoder.matches(loginId, passwordUpdateForm.getCurrentPassword(), user.getPassword())) {
             return false;
         }
 
         if(!passwordUpdateForm.getNewPassword().equals(passwordUpdateForm.getNewPasswordConfirm())) {
             return false;
         }
-        String encodedNewPassword = passwordEncoder.encode(findUserLoginId, passwordUpdateForm.getNewPassword());
+
+        String encodedNewPassword = passwordEncoder.encode(loginId, passwordUpdateForm.getNewPassword());
         user.setPassword(encodedNewPassword);
-        userRepository.save(user);
+
         return true;
     }
 

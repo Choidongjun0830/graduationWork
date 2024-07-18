@@ -24,6 +24,10 @@ public class FlightService {
         return flight.getId();
     }
 
+    public Flight findOne(Long id) {
+        return flightRepository.findById(id);
+    }
+
     public Flight getFlight(String flightNumber, LocalDateTime departureDate) {
         return flightRepository.findByFlightNumDepartureDate(flightNumber, departureDate);
     }

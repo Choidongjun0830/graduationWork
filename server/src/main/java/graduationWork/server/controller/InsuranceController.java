@@ -1,18 +1,19 @@
 package graduationWork.server.controller;
 
-import graduationWork.server.domain.Insurance;
-import graduationWork.server.domain.User;
-import graduationWork.server.domain.UserInsurance;
+import graduationWork.server.domain.*;
 import graduationWork.server.dto.CompensationApplyForm;
 import graduationWork.server.dto.DelayCompensationApplyForm;
-import graduationWork.server.domain.UploadFile;
+import graduationWork.server.dto.InsuranceJoinDateSelectForm;
 import graduationWork.server.dto.UploadCompensationApplyForm;
+import graduationWork.server.enumurate.FlightStatus;
 import graduationWork.server.enumurate.InsuranceType;
 import graduationWork.server.file.FileStore;
 import graduationWork.server.repository.InsuranceRepository;
+import graduationWork.server.service.FlightService;
 import graduationWork.server.service.InsuranceService;
 import graduationWork.server.service.UserInsuranceService;
 import graduationWork.server.service.UserService;
+import graduationWork.server.utils.DateTimeUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -20,12 +21,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @Slf4j
@@ -35,33 +40,8 @@ public class InsuranceController {
     private final UserService userService;
     private final InsuranceService insuranceService;
     private final UserInsuranceService userInsuranceService;
-    private final InsuranceRepository insuranceRepository;
     private final FileStore fileStore;
-
-
-
-//    @GetMapping("/insurance/search")
-//    public String search(@ModelAttribute InsuranceSearchForm form, HttpSession session) {
-//        return "insurance/search";
-//    }
-
-//    @PostMapping("/insurance/search")
-//    public String searchInsurance(@ModelAttribute InsuranceSearchForm form) {
-//        // 검색 로직
-//        model.addAttribute("searchResult", searchService.search(form));
-//
-//        return "searchResultPage";
-//    }
-
-    @PostMapping("/")
-    public String searchInsurance(DelayCompensationApplyForm insuranceSearchForm, HttpSession session, BindingResult bindingResult) {
-//        if(bindingResult.hasErrors()) {
-//            return "redirect:/";
-//        }
-        Insurance insurance = new Insurance();
-
-        return "insurance/insuranceCheck";
-    }
+    private final FlightService flightService;
 
     @GetMapping("/insurance/new")
     public String join() {
@@ -84,21 +64,38 @@ public class InsuranceController {
     }
 
     @GetMapping("/insurance/new/{insuranceId}")
-    public String registerInsurance(@PathVariable Long insuranceId, @RequestParam InsuranceType insuranceType, Model model) {
+    public String registerInsurance(@PathVariable Long insuranceId,
+                                    @ModelAttribute("dateSelectForm")InsuranceJoinDateSelectForm dateSelectForm,
+                                    Model model) {
         Insurance findInsurance = insuranceService.findOneInsurance(insuranceId);
 
         model.addAttribute("insurance", findInsurance);
-        model.addAttribute("insuranceType", insuranceType);
 
         return "insurance/registerInsuranceForm";
     }
 
     @PostMapping("/insurance/new/{insuranceId}")
-    public String registerInsuranceProc(@PathVariable Long insuranceId, @RequestParam LocalDate startDate,
-                                        @RequestParam LocalDate endDate, HttpSession session, Model model) {
+    public String registerInsuranceProc(@PathVariable Long insuranceId,
+                                        @SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,
+                                        @Validated @ModelAttribute("dateSelectForm")InsuranceJoinDateSelectForm dateSelectForm,
+                                        BindingResult bindingResult,
+                                        HttpSession session, Model model) {
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("insurance", insuranceService.findOneInsurance(insuranceId));
+            return "insurance/registerInsuranceForm";
+        }
+
         //보험 가입 처리
-        User loginUser = (User) session.getAttribute("loginUser");
         Long loginUserId = loginUser.getId();
+        LocalDate startDate = dateSelectForm.getStartDate();
+        LocalDate endDate = dateSelectForm.getEndDate();
+
+        if (startDate.isBefore(LocalDate.now()) || endDate.isBefore(LocalDate.now()) || startDate.isAfter(endDate)) {
+            bindingResult.reject("insuranceJoinDateError", null);
+            model.addAttribute("insurance", insuranceService.findOneInsurance(insuranceId));
+            return "insurance/registerInsuranceForm";
+        }
 
         Long userInsuranceId = userInsuranceService.registerInsurance(insuranceId, loginUserId, startDate, endDate);
 
@@ -124,22 +121,40 @@ public class InsuranceController {
     }
 
     @GetMapping("insurance/compensation/apply")
-    public String compensationForm(@RequestParam Long userInsuranceId, Model model, HttpSession session) {
+    public String compensationForm(@RequestParam Long userInsuranceId,
+                                   @ModelAttribute("form") CompensationApplyForm form,
+                                   Model model,
+                                   HttpSession session) {
+
         User loginUser = (User) session.getAttribute("loginUser");
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
 
-        CompensationApplyForm form = new CompensationApplyForm();
         form.setEmail(loginUser.getEmail());
-
-        model.addAttribute("form", form);
         model.addAttribute("userInsurance", userInsurance);
-        model.addAttribute("coverageMap", userInsurance.getInsurance().getCoverageMap());
+
+        Map<String, String> coverageMap = userInsurance.getInsurance().getCoverageMap();
+        if (coverageMap == null) {
+            coverageMap = new HashMap<>();
+        }
+        model.addAttribute("coverageMap", coverageMap);
 
         return "insurance/compensationApply";
     }
 
     @PostMapping("insurance/compensation/apply")
-    public String compensationApply(@RequestParam Long userInsuranceId, @ModelAttribute CompensationApplyForm form, HttpSession session) {
+    public String compensationApply(@RequestParam Long userInsuranceId,
+                                    @Validated @ModelAttribute("form") CompensationApplyForm form,
+                                    BindingResult bindingResult,
+                                    Model model,
+                                    HttpSession session) {
+
+        if(bindingResult.hasErrors()) {
+            UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
+            model.addAttribute("userInsurance", userInsurance);
+            model.addAttribute("coverageMap", userInsurance.getInsurance().getCoverageMap());
+            return "insurance/compensationApply";
+        }
+
         User loginUser = (User) session.getAttribute("loginUser");
         session.setAttribute("applyForm", form);
         userInsuranceService.applyFirstCompensationForm(userInsuranceId, loginUser.getId(), form);
@@ -153,15 +168,47 @@ public class InsuranceController {
 
     @GetMapping("insurance/compensation/apply/flightDelay")
     public String flightDelayForm(@RequestParam Long userInsuranceId,
-                                  @ModelAttribute("delayForm") DelayCompensationApplyForm delayForm, Model model, HttpSession session) {
+                                  @ModelAttribute("delayForm") DelayCompensationApplyForm delayForm,
+                                  Model model, HttpSession session) {
+
         model.addAttribute("userInsuranceId", userInsuranceId);
         return "insurance/flightCompensationApply";
     }
 
     @PostMapping("insurance/compensation/apply/flightDelay")
     public String flightDelayApply(@RequestParam Long userInsuranceId,
-                                   @ModelAttribute DelayCompensationApplyForm delayForm,
+                                   @ModelAttribute("delayForm") @Validated DelayCompensationApplyForm delayForm,
+                                   BindingResult bindingResult,
+                                   Model model,
                                    HttpSession session) {
+
+        model.addAttribute("userInsuranceId", userInsuranceId);
+
+        String formFlightNum = delayForm.getFlightNum();
+        LocalDateTime formDepartureDate = delayForm.getDepartureDate();
+
+        if (formDepartureDate == null || formFlightNum == null) { //입력하지 않았을 때.
+            bindingResult.reject("flightDelayApplyNullError",null);
+            return "insurance/flightCompensationApply";
+        }
+
+        Flight findFlight = flightService.getFlight(formFlightNum, formDepartureDate);
+        String dateTime = DateTimeUtils.formatDateTime(formDepartureDate);
+        if (findFlight == null) { //존재하는 항공편이 없을 때.
+
+            bindingResult.reject("flightDelayApplyError", new Object[]{formFlightNum, dateTime}, null);
+            return "insurance/flightCompensationApply";
+        }
+
+        if (findFlight.getStatus() == FlightStatus.SCHEDULED) { //항공편의 상태가 지연이나 취소가 아님.
+            bindingResult.reject("flightDelayApplyNotDelayedNotCancelled", new Object[]{formFlightNum, dateTime}, null);
+            return "insurance/flightCompensationApply";
+        }
+
+        if (bindingResult.hasErrors()) {
+            log.info("errors={}", bindingResult);
+            return "insurance/flightCompensationApply";
+        }
 
         User loginUser = (User) session.getAttribute("loginUser");
         userInsuranceService.applyDelayCompensation(userInsuranceId, loginUser.getId(), delayForm);

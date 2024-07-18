@@ -5,6 +5,7 @@ import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.domain.Wallet;
 import graduationWork.server.dto.PasswordUpdateForm;
 import graduationWork.server.repository.InsuranceRepository;
+import graduationWork.server.security.PasswordEncoder;
 import graduationWork.server.service.UserInsuranceService;
 import graduationWork.server.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,9 +18,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
 
@@ -31,6 +34,7 @@ public class UserController {
     private final UserService userService;
     private final UserInsuranceService userInsuranceService;
     private final InsuranceRepository insuranceRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/join")
     public String joinForm(@ModelAttribute User user) {
@@ -38,8 +42,15 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join(@Valid @ModelAttribute User user, BindingResult bindingResult) {
+    public String join(@Validated @ModelAttribute User user, BindingResult bindingResult, Model model) {
+
+        String loginId = user.getLoginId();
+        if(userService.findByLoginId(loginId) != null) {
+            bindingResult.rejectValue("loginId", "loginId.exists", "이미 존재하는 로그인 ID 입니다.");
+        }
+
         if(bindingResult.hasErrors()) {
+            model.addAttribute("user", user);
             return "users/joinMemberForm";
         }
 
@@ -59,18 +70,33 @@ public class UserController {
         return "users/passwordUpdateForm";
     }
 
-    @PostMapping("/user/passwordUpdate")
-    public String passwordUpdate(PasswordUpdateForm passwordUpdateForm, HttpSession session, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            return "users/userInfo";
+    @PostMapping("/user/passwordUpdate") //여기서 새로운 패스워드 두번 입력 같은지 검증
+    public String passwordUpdate(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,
+                                 @Validated @ModelAttribute PasswordUpdateForm passwordUpdateForm,
+                                 BindingResult bindingResult) {
+
+        String typedCurrentPassword = passwordUpdateForm.getCurrentPassword();
+        String encodeTyped = passwordEncoder.encode(loginUser.getLoginId(), typedCurrentPassword);
+
+        if(!loginUser.getPassword().equals(encodeTyped)) {
+            bindingResult.rejectValue("currentPassword", "currentPassword.error");
+            return "users/passwordUpdateForm";
         }
 
-        User loginUser = (User) session.getAttribute("loginUser");
-        boolean updatePassword = userService.updatePassword(loginUser, passwordUpdateForm);
+        if(!passwordUpdateForm.getNewPassword().equals(passwordUpdateForm.getNewPasswordConfirm())) {
+            bindingResult.rejectValue("newPasswordConfirm","passwordUpdateError");
+            return "users/passwordUpdateForm";
+        }
+
+        if(bindingResult.hasErrors()){
+            return "users/passwordUpdateForm";
+        }
+
+        boolean updatePassword = userService.updatePassword(loginUser.getId(), passwordUpdateForm);
         if(updatePassword){
             return "redirect:/user/info";
         }else {
-            return "redirect:/";
+            return "users/passwordUpdateForm";
         }
     }
 
@@ -80,10 +106,7 @@ public class UserController {
     }
 
     @PostMapping("/user/walletAccountUpdate")
-    public String walletAccountUpdate(Wallet wallet, HttpSession session, BindingResult bindingResult) {
-        if(bindingResult.hasErrors()){
-            return "users/userInfo";
-        }
+    public String walletAccountUpdate(Wallet wallet, HttpSession session) {
 
         User loginUser = (User) session.getAttribute("loginUser");
         userService.updateWalletAccount(loginUser, wallet);

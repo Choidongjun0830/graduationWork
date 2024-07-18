@@ -39,7 +39,7 @@ public class UserInsurance {
     @Enumerated(EnumType.STRING)
     private InsuranceStatus status;
 
-    //보상 상태 (가능, 불가능, 보상중, 보상됨)
+    //보상 상태
     @Enumerated(EnumType.STRING)
     private CompensationStatus compensationStatus;
 

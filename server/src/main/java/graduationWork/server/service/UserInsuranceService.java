@@ -14,6 +14,8 @@ import graduationWork.server.repository.UserInsuranceRepository;
 import graduationWork.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -37,6 +39,9 @@ public class UserInsuranceService {
     private final FlightRepository flightRepository;
     private final FileStore fileStore;
     private final FileService fileService;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserInsuranceService.class);
+
 
     @Transactional
     public Long registerInsurance(Long insuranceId, Long userId, LocalDate startDate, LocalDate endDate) {
@@ -158,11 +163,15 @@ public class UserInsuranceService {
     }
 
     public List<UserInsurance> findAllUserInsurances(InsuranceSearch insuranceSearch) {
+
         CompensationStatus compensationStatus = insuranceSearch.getCompensationStatus();
 
         String insuranceName = insuranceSearch.getInsuranceName();
+
         String username = insuranceSearch.getUsername();
+
         CompensationOption option = insuranceSearch.getCompensationOption();
+
         return userInsuranceRepository.findAllUserInsurances(username, insuranceName, compensationStatus, option);
     }
 }

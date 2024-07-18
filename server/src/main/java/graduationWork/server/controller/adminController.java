@@ -49,13 +49,7 @@ public class adminController {
     public String compensationRequests(@ModelAttribute InsuranceSearch insuranceSearch, HttpSession session, Model model) throws AccessDeniedException {
         checkRole(session);
 
-        log.info("Insurance search: " + insuranceSearch.toString());
-
         List<UserInsurance> userInsurances = userInsuranceService.findAllUserInsurances(insuranceSearch);
-
-        for (UserInsurance userInsurance : userInsurances) {
-            log.info(userInsurance.toString());
-        }
 
         model.addAttribute("userInsurances", userInsurances);
 

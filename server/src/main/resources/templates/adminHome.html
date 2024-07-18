@@ -7,7 +7,7 @@
 <body>
 <div class="container" style="max-width: 30%">
     <div class="py-5 text-center">
-        <h2>관리자 홈 화면</h2>
+        <h2>관리자 홈</h2>
     </div>
     <div class="row">
         <div class="col">
@@ -20,39 +20,41 @@
 </div> <!-- /container -->
 <div class="container" style="max-width: 60%">
     <hr class="my-4">
-    <div class="row dropdown">
-        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-            보험 신청 리스트
-        </button>
-        <ul class="dropdown-menu">
-            <li><a class="dropdown-item" href="/boardList/notice">공지</a></li>
-            <li><a class="dropdown-item" href="/boardList/shoppingInfo">쇼핑 정보</a></li>
-            <li><a class="dropdown-item" href="/boardList/mat">Mat</a></li>
-            <li><a class="dropdown-item" href="/boardList/mut">Mut</a></li>
-        </ul>
-    </div>
+<!--    <div class="row dropdown">-->
+<!--        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--            보험 가입 리스트-->
+<!--        </button>-->
+<!--        <ul class="dropdown-menu">-->
+<!--            <li><a class="dropdown-item" href="/boardList/notice">공지</a></li>-->
+<!--            <li><a class="dropdown-item" href="/boardList/shoppingInfo">쇼핑 정보</a></li>-->
+<!--            <li><a class="dropdown-item" href="/boardList/mat">Mat</a></li>-->
+<!--            <li><a class="dropdown-item" href="/boardList/mut">Mut</a></li>-->
+<!--        </ul>-->
+<!--    </div>-->
     <div class="py-5 text-center">
-        <h2>보험 신청</h2>
+        <h2>보험 가입 리스트</h2>
     </div>
     <table class="table table-hover">
         <thead>
         <tr>
-            <th>ID</th>
+            <th>#</th>
+            <th>보험명</th>
             <th>이름</th>
-            <th>항공편</th>
-            <th>발생 날짜</th>
-            <th>신청 날짜</th>
-            <th>신청 타입</th>
+            <th>시작일</th>
+            <th>만료일</th>
+            <th>가입료</th>
+            <th>보상 상태</th>
         </tr>
         </thead>
         <tbody>
-        <tr th:each="post : ${postList}">
-            <td><a href="postView.html" th:href="@{|/board/${post.id}|}" th:text="${post.id}">ID</a></td>
-            <td th:text="${post.username}">이름</td>
-            <td th:text="${post.flight}">항공편</td>
-            <td th:text="${post.eventDate}">발생 날짜</td>
-            <td th:text="${post.requestDate}">신청 날짜</td>
-            <td th:text="${post.requestType}">신청 타입</td>
+        <tr th:each="userInsurance : ${userInsurances}">
+            <td><a href="postView.html" th:href="@{|/board/${userInsurance.id}|}" th:text="${userInsurance.id}">ID</a></td>
+            <td th:text="${userInsurance.insurance.name}">보험명</td>
+            <td th:text="${userInsurance.user.username}">이름</td>
+            <td th:text="${userInsurance.startDate}">시작일</td>
+            <td th:text="${userInsurance.endDate}">만료일</td>
+            <td th:text="${userInsurance.registerPrice}">가입료</td>
+            <td th:text="${userInsurance.compensationStatus}">보상 상태</td>
         </tr>
         </tbody>
     </table>

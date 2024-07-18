@@ -18,6 +18,10 @@ public class FlightRepository {
         em.persist(flight);
     }
 
+    public Flight findById(Long id) {
+        return em.find(Flight.class, id);
+    }
+
     public Flight findByFlightNumDepartureDate(String flightNum, LocalDateTime departureDate) {
         List<Flight> flights = em.createQuery("select f from Flight f where f.flightNum = :flightNum and f.departureDate = :departureDate")
                 .setParameter("flightNum", flightNum)

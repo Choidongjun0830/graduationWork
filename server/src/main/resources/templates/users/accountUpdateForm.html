@@ -20,9 +20,6 @@
   </div>
   <h4 class="mb-3">가상 화폐 지갑 입력</h4>
   <form action = "" th:action th:object="${wallet}" method="post">
-<!--    <div th:if="${#fields.hasGlobalErrors()}">-->
-<!--      <p class="field-error" th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>-->
-<!--    </div>-->
     <div class="mb-3">
       <label for="inputWalletAccount" class="form-label">가상 화폐 지갑</label>
       <input type="text" id="inputWalletAccount" class="form-control" aria-describedby="inputWalletAccountBlock"

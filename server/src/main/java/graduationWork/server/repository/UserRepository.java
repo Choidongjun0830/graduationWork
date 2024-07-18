@@ -20,11 +20,7 @@ public class UserRepository {
     private final PasswordEncoder passwordEncoder;
 
     public Long save(User user) {
-        if(user.getId() == null) {
-            em.persist(user);
-        } else {
-            em.merge(user);
-        }
+        em.persist(user);
         return user.getId();
     }
 

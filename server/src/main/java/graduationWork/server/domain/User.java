@@ -24,22 +24,18 @@ public class User {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    @NotEmpty(message = "로그인ID는 필수 입니다.")
-    @NotBlank(groups = {SaveCheck.class, UpdateCheck.class})
+    @NotBlank(message = "로그인ID는 필수 입니다.")
     private String loginId;
 
     @Column(nullable = false)
-    @NotEmpty(message = "비밀번호는 필수 입니다.")
-    @NotBlank(groups = {SaveCheck.class, UpdateCheck.class})
+    @NotBlank(message = "비밀번호는 필수 입니다.")
 //    @Length(min=8, max=20)
     private String password;
 
-    @NotEmpty(message = "이름은 필수 입니다.")
-    @NotBlank(groups = {SaveCheck.class, UpdateCheck.class})
+    @NotBlank(message = "이름은 필수 입니다.")
     private String username;
 
-    @NotEmpty(message = "이메일은 필수 입니다.")
-    @NotBlank(groups = {SaveCheck.class, UpdateCheck.class})
+    @NotBlank(message = "이메일은 필수 입니다.")
     private String email;
 
     private String role = "USER";
@@ -48,9 +44,6 @@ public class User {
     @Embedded
 //    @NotEmpty(message = "주소는 필수 입니다.")
     private Address address;
-
-//    @OneToMany(mappedBy = "user")
-//    private List<Flight> flights = new ArrayList<>();
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "wallet_id")

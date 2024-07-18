@@ -13,6 +13,9 @@ import graduationWork.server.enumurate.CompensationStatus;
 import graduationWork.server.enumurate.InsuranceType;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,11 +26,14 @@ import static graduationWork.server.domain.QUserInsurance.userInsurance;
 
 @Repository
 @RequiredArgsConstructor
+@Slf4j
 public class UserInsuranceRepository {
 
     private final UserRepository userRepository;
     private final InsuranceRepository insuranceRepository;
     private final EntityManager em;
+
+    private static final Logger logger = LoggerFactory.getLogger(UserInsuranceRepository.class);
 
     public Long save(UserInsurance userInsurance) {
         em.persist(userInsurance);
@@ -50,10 +56,10 @@ public class UserInsuranceRepository {
                 .getResultList();
     }
 
-    public List<UserInsurance> findAllUserInsurances(String usernameCond, String insuranceNameCond, CompensationStatus  statusCond, CompensationOption optionCond) {
+    public List<UserInsurance> findAllUserInsurances(String usernameCond, String insuranceNameCond, CompensationStatus statusCond, CompensationOption optionCond) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
-        return queryFactory
+        List<UserInsurance> result = queryFactory
                 .selectFrom(userInsurance)
                 .join(userInsurance.insurance, insurance)
                 .join(userInsurance.user, user)
@@ -62,16 +68,30 @@ public class UserInsuranceRepository {
                         insuranceNameEq(insuranceNameCond),
                         compensationOptionEq(optionCond),
                         compensationStatusEq(statusCond)
-                        )
+                )
                 .fetch();
+
+        for (UserInsurance userInsurance1 : result) {
+            log.info(userInsurance1.toString());
+        }
+
+        return result;
     }
 
     private BooleanExpression usernameEq(String usernameCond) {
-        return usernameCond != null ? user.username.eq(usernameCond) : null;
+        if(usernameCond == null || usernameCond.isEmpty()) {
+            return null;
+        }
+
+        return user.username.eq(usernameCond);
     }
 
     private BooleanExpression insuranceNameEq(String insuranceNameCond) {
-        return insuranceNameCond != null ? insurance.name.eq(insuranceNameCond) : null;
+        if(insuranceNameCond == null || insuranceNameCond.isEmpty()) {
+            return null;
+        }
+
+        return insurance.name.eq(insuranceNameCond);
     }
 
     private BooleanExpression compensationOptionEq(CompensationOption compensationOptionCond) {

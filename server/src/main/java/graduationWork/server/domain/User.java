@@ -45,18 +45,12 @@ public class User {
 //    @NotEmpty(message = "주소는 필수 입니다.")
     private Address address;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "wallet_id")
-    private Wallet wallet;
+    private String walletAddress;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UserInsurance> userInsurances = new ArrayList<>();
 
     //==연관 관계 편의 메서드==//
-    public void updateWallet(Wallet walletInfo) {
-        this.wallet = walletInfo;
-        wallet.setUser(this);
-    }
 
     public void addUserInsurance(UserInsurance userInsurance) {
         userInsurances.add(userInsurance);

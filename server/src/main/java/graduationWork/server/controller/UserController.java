@@ -2,15 +2,14 @@ package graduationWork.server.controller;
 
 import graduationWork.server.domain.User;
 import graduationWork.server.domain.UserInsurance;
-import graduationWork.server.domain.Wallet;
 import graduationWork.server.dto.PasswordUpdateForm;
+import graduationWork.server.dto.WalletUpdateForm;
 import graduationWork.server.repository.InsuranceRepository;
 import graduationWork.server.security.PasswordEncoder;
 import graduationWork.server.service.UserInsuranceService;
 import graduationWork.server.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 //import org.springframework.security.core.Authentication;
@@ -42,17 +41,18 @@ public class UserController {
     }
 
     @PostMapping("/join")
-    public String join(@Validated @ModelAttribute User user, BindingResult bindingResult, Model model) {
+    public String join(@Validated @ModelAttribute User user, BindingResult bindingResult) {
 
-        String loginId = user.getLoginId();
-        if(userService.findByLoginId(loginId) != null) {
-            bindingResult.rejectValue("loginId", "loginId.exists", "이미 존재하는 로그인 ID 입니다.");
-        }
+//        if (!userService.checkLoginIdUnique(user.getLoginId())) {
+//            bindingResult.rejectValue("loginId", "loginId.exists");
+//            return "users/joinMemberForm";
+//        }
 
         if(bindingResult.hasErrors()) {
-            model.addAttribute("user", user);
             return "users/joinMemberForm";
         }
+
+        log.info(user.toString());
 
         userService.join(user);
         return "redirect:/";
@@ -101,15 +101,18 @@ public class UserController {
     }
 
     @GetMapping("/user/walletAccountUpdate")
-    public String walletAccountUpdateForm(@ModelAttribute Wallet wallet) {
+    public String walletAccountUpdateForm(@ModelAttribute WalletUpdateForm walletUpdateForm) {
         return "users/accountUpdateForm";
     }
 
     @PostMapping("/user/walletAccountUpdate")
-    public String walletAccountUpdate(Wallet wallet, HttpSession session) {
-
-        User loginUser = (User) session.getAttribute("loginUser");
-        userService.updateWalletAccount(loginUser, wallet);
+    public String walletAccountUpdate(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,
+                                      WalletUpdateForm walletUpdateForm, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            return "users/userInfo";
+        }
+        String accountAddress = walletUpdateForm.getAccountAddress();
+        userService.updateWalletAddress(loginUser.getId(), accountAddress);
         return "redirect:/user/info";
     }
 

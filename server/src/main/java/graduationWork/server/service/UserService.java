@@ -1,7 +1,6 @@
 package graduationWork.server.service;
 
 import graduationWork.server.domain.User;
-import graduationWork.server.domain.Wallet;
 import graduationWork.server.dto.PasswordUpdateForm;
 import graduationWork.server.repository.UserRepository;
 import graduationWork.server.security.PasswordEncoder;
@@ -74,8 +73,12 @@ public class UserService {
     }
 
     @Transactional
-    public void updateWalletAccount(User user, Wallet wallet) {
-        user.setWallet(wallet);
-        wallet.setUser(user);
+    public void updateWalletAddress(Long userId, String walletAddress) {
+        User findUser = userRepository.findById(userId);
+        findUser.setWalletAddress(walletAddress);
+    }
+
+    public Boolean checkLoginIdUnique(String loginId) {
+        return userRepository.existsByUsername(loginId);
     }
 }

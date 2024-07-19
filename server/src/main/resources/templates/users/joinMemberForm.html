@@ -47,6 +47,15 @@
                    th:field="*{email}" th:errorclass="field-error" placeholder="이메일">
             <div class="field-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
         </div>
+        <div class="mb-3">
+            <label for="inputWalletAddress" class="form-label">가상 화폐 계좌</label>
+            <input type = "text" class="form-control" id="inputWalletAddress" th:field="*{walletAddress}"
+                   th:errorclass="field-error" placeholder="가상 화폐 계좌">
+            <div class="field-error" th:errors="*{walletAddress}">가상 화폐 계좌 입력 오류</div>
+            <div id="accountAddressHelpBlock" class="form-text">
+                가상 화폐 계좌는 후에 내 정보에서도 입력할 수 있습니다. 하지만, 보험 가입 시에는 가상 화폐 계좌가 필요합니다.
+            </div>
+        </div>
         <hr class="my-4">
         <div class="row">
             <div class="col m">

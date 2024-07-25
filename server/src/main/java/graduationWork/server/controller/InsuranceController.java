@@ -41,7 +41,12 @@ public class InsuranceController {
     private final FlightService flightService;
 
     @GetMapping("/insurance/new")
-    public String join() {
+    public String join(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser) {
+
+        if(loginUser.getWalletAddress() == null) {
+            //알림 띄우기 가상화폐 계좌를 입력해주세요.
+            return "redirect:/user/info";
+        }
         return "insurance/travelTypeSelectFrom";
     }
 

@@ -38,6 +38,7 @@ public class InitUsers {
             user.setRole("ROLE_ADMIN");
             user.setEmail("dsada1234@naver.com");
             user.setJoinDate(LocalDate.now());
+            user.setWalletAddress("관리자 주소");
             em.persist(user);
         }
 
@@ -49,6 +50,7 @@ public class InitUsers {
             user.setRole("ROLE_USER");
             user.setEmail("adong0808@naver.com");
             user.setJoinDate(LocalDate.now());
+            user.setWalletAddress("사용자 주소");
             em.persist(user);
         }
     }

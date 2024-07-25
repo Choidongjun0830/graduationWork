@@ -1,7 +1,7 @@
 package graduationWork.server.service;
 
+import graduationWork.server.domain.Address;
 import graduationWork.server.domain.User;
-import graduationWork.server.domain.Wallet;
 import graduationWork.server.dto.PasswordUpdateForm;
 import graduationWork.server.repository.UserRepository;
 import graduationWork.server.security.PasswordEncoder;
@@ -31,7 +31,6 @@ public class UserService {
         if (IsAlreadyExists) {
             return 0L; //에러 처리.
         }
-
 
         user.setPassword(passwordEncoder.encode(user.getLoginId(), user.getPassword()));
         user.setRole("ROLE_USER"); //ADMIN은 그냥 DB에 넣어두기
@@ -74,8 +73,19 @@ public class UserService {
     }
 
     @Transactional
-    public void updateWalletAccount(User user, Wallet wallet) {
-        user.setWallet(wallet);
-        wallet.setUser(user);
+    public void updateAddress(Long userId, Address address) {
+
+        User user = userRepository.findById(userId);
+        user.setAddress(address);
+    }
+
+    @Transactional
+    public void updateWalletAddress(Long userId, String walletAddress) {
+        User user = userRepository.findById(userId);
+        user.setWalletAddress(walletAddress);
+    }
+
+    public Boolean checkLoginIdUnique(String loginId) {
+        return userRepository.existsByLoginId(loginId); //존재하면 true
     }
 }

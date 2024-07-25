@@ -54,8 +54,6 @@ public class Insurance { //유저에게 가입된 보험 정보를 나타내는 
                 "name='" + name + '\'' +
                 ", premium=" + premium +
                 ", formattedPremium='" + formattedPremium + '\'' +
-//                ", coverageLimit=" + coverageLimit +
-//                ", formattedCoverageLimit='" + formattedCoverageLimit + '\'' +
                 ", insuranceType=" + insuranceType +
                 '}';
     }

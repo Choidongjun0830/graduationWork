@@ -2,6 +2,7 @@ package graduationWork.server.service;
 
 import graduationWork.server.domain.*;
 import graduationWork.server.dto.*;
+import graduationWork.server.email.service.EmailService;
 import graduationWork.server.enumurate.FlightStatus;
 import graduationWork.server.file.FileStore;
 import graduationWork.server.repository.FlightRepository;
@@ -39,12 +40,13 @@ public class UserInsuranceService {
     private final FlightRepository flightRepository;
     private final FileStore fileStore;
     private final FileService fileService;
+    private final EmailService emailService;
 
     private static final Logger logger = LoggerFactory.getLogger(UserInsuranceService.class);
 
 
     @Transactional
-    public Long registerInsurance(Long insuranceId, Long userId, LocalDate startDate, LocalDate endDate) {
+    public Long joinApplyInsurance(Long insuranceId, Long userId, LocalDate startDate, LocalDate endDate) {
         User user = userRepository.findById(userId);
 
         UserInsurance userInsurance = new UserInsurance();
@@ -58,7 +60,7 @@ public class UserInsuranceService {
         userInsurance.setStartDate(startDate);
         userInsurance.setEndDate(endDate);
         userInsurance.setRegisterDate(LocalDate.now());
-        userInsurance.setStatus(InsuranceStatus.ACTIVE);
+        userInsurance.setStatus(InsuranceStatus.WAITING_JOIN); //가입 대기중으로
         userInsurance.setCompensationStatus(CompensationStatus.NOT_SUBMITTED);
 
         user.addUserInsurance(userInsurance);
@@ -69,7 +71,11 @@ public class UserInsuranceService {
         int registerPrice = premium * days;
         userInsurance.setRegisterPrice(NumberUtils.formatCurrency(registerPrice));
 
-        return userInsuranceRepository.save(userInsurance);
+        Long userInsuranceId = userInsuranceRepository.save(userInsurance);
+
+//        String sub = "보험 가입 신청 완료";
+//        emailService.sendAddressEmail(userInsuranceId, sub);
+        return userInsuranceId;
     }
 
     @Transactional

@@ -31,6 +31,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect'
 	implementation 'org.mindrot:jbcrypt:0.4'
+	implementation 'javax.servlet:jstl:1.2'
+	implementation "org.apache.tomcat.embed:tomcat-embed-jasper"
+//	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'

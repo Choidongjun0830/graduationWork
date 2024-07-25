@@ -56,14 +56,38 @@ public class adminController {
         return "admin/userInsuranceListForAdmin";
     }
 
+    @GetMapping("/insurance/admin/join/manage")
+    public String joinManage(@RequestParam Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
+        checkRole(session);
+
+        UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
+        model.addAttribute("userInsurance", userInsurance);
+        return "admin/joinManage";
+    }
+
     @GetMapping("/insurance/admin/compensation/manage")
     public String compensationManage(@RequestParam Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
         checkRole(session);
 
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
         model.addAttribute("userInsurance", userInsurance);
-        UserInsurance userInsurance1 = (UserInsurance) model.getAttribute("userInsurance");
         return "admin/compensationManage";
+    }
+
+    @PostMapping("/insurance/admin/sendJoinMail")
+    public String sendJoinMail(@RequestParam("userInsuranceId") Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
+        checkRole(session);
+
+        UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
+        userInsuranceService.setCompensationAmount(userInsuranceId);
+
+        String sub = "보험 가입 완료";
+        emailService.sendJoinEmail(userInsuranceId, sub);
+
+        model.addAttribute("message", "이메일이 성공적으로 전송되었습니다.");
+        model.addAttribute("userInsurance", userInsurance);
+
+        return "admin/JoinEmailSuccess";
     }
 
     @PostMapping("/insurance/admin/sendCompensationMail")

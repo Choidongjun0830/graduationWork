@@ -8,13 +8,11 @@ import graduationWork.server.dto.UploadCompensationApplyForm;
 import graduationWork.server.enumurate.FlightStatus;
 import graduationWork.server.enumurate.InsuranceType;
 import graduationWork.server.file.FileStore;
-import graduationWork.server.repository.InsuranceRepository;
 import graduationWork.server.service.FlightService;
 import graduationWork.server.service.InsuranceService;
 import graduationWork.server.service.UserInsuranceService;
 import graduationWork.server.service.UserService;
 import graduationWork.server.utils.DateTimeUtils;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +21,6 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -97,7 +94,7 @@ public class InsuranceController {
             return "insurance/registerInsuranceForm";
         }
 
-        Long userInsuranceId = userInsuranceService.registerInsurance(insuranceId, loginUserId, startDate, endDate);
+        Long userInsuranceId = userInsuranceService.joinApplyInsurance(insuranceId, loginUserId, startDate, endDate); //가입 신청
 
         session.setAttribute("userInsuranceId", userInsuranceId);
 
@@ -117,8 +114,10 @@ public class InsuranceController {
 
         model.addAttribute("userInsurance", userInsurance);
 
-        return "insurance/registerSuccess";
+        return "insurance/joinApplySuccess";
     }
+
+    //여기까지 보험 신청 아래는 보험 보상 신청//
 
     @GetMapping("insurance/compensation/apply")
     public String compensationForm(@RequestParam Long userInsuranceId,
@@ -236,5 +235,17 @@ public class InsuranceController {
         userInsuranceService.applyUploadCompensation(userInsuranceId, loginUser.getId(), uploadForm);
 
         return "redirect:/user/insurances";
+    }
+
+
+    //보험 보장 내역
+    @GetMapping("/insurance/details/{insuranceId}")
+    public String insuranceDetails(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,
+                                   @PathVariable Long insuranceId, Model model) {
+
+        Insurance insurance = insuranceService.findOneInsurance(insuranceId);
+        model.addAttribute("insurance", insurance);
+
+        return "insurance/insuranceDetails";
     }
 }

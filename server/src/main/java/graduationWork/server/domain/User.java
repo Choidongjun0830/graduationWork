@@ -24,39 +24,28 @@ public class User {
     private Long id;
 
     @Column(unique = true, nullable = false)
-    @NotBlank(message = "로그인ID는 필수 입니다.")
     private String loginId;
 
     @Column(nullable = false)
-    @NotBlank(message = "비밀번호는 필수 입니다.")
 //    @Length(min=8, max=20)
     private String password;
 
-    @NotBlank(message = "이름은 필수 입니다.")
     private String username;
 
-    @NotBlank(message = "이메일은 필수 입니다.")
     private String email;
 
     private String role = "USER";
     private LocalDate joinDate;
 
     @Embedded
-//    @NotEmpty(message = "주소는 필수 입니다.")
-    private Address address;
+    private Address address = new Address();
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "wallet_id")
-    private Wallet wallet;
+    private String walletAddress;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UserInsurance> userInsurances = new ArrayList<>();
 
     //==연관 관계 편의 메서드==//
-    public void updateWallet(Wallet walletInfo) {
-        this.wallet = walletInfo;
-        wallet.setUser(this);
-    }
 
     public void addUserInsurance(UserInsurance userInsurance) {
         userInsurances.add(userInsurance);

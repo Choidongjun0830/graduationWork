@@ -2,11 +2,13 @@ package graduationWork.server.email.service;
 
 import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.enumurate.CompensationStatus;
+import graduationWork.server.enumurate.InsuranceStatus;
 import graduationWork.server.repository.InsuranceRepository;
 import graduationWork.server.repository.UserInsuranceRepository;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
+@Slf4j
 public class EmailService {
 
     private final JavaMailSender mailSender;
@@ -24,6 +27,49 @@ public class EmailService {
 
     @Value("${spring.mail.username}")
     private String sender;
+
+    @Transactional
+    public void sendAddressEmail(Long userInsuranceId, String subject) {
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
+        String to = userInsurance.getUser().getEmail();
+
+        try{
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            mimeMessageHelper.setFrom(sender);
+            mimeMessageHelper.setTo(to);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(buildSendAddressEmailContent(userInsurance), true);
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public void sendJoinEmail(Long userInsuranceId, String subject) {
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
+        userInsurance.setStatus(InsuranceStatus.JOINED);
+        String to = userInsurance.getUser().getEmail();
+
+        try{
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            mimeMessageHelper.setFrom(sender);
+            mimeMessageHelper.setTo(to);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(buildJoinEmailContent(userInsurance), true);
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
 
     @Transactional
     public void sendCompensationEmail(Long userInsuranceId, String subject) {
@@ -40,7 +86,7 @@ public class EmailService {
             mimeMessageHelper.setFrom(sender);
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject(subject);
-            mimeMessageHelper.setText(buildEmailContent(userInsurance), true);
+            mimeMessageHelper.setText(buildCompensationEmailContent(userInsurance), true);
 
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
@@ -48,7 +94,54 @@ public class EmailService {
         }
     }
 
-    private String buildEmailContent(UserInsurance userInsurance) {
+    //보험 가입 신청시에 입금 주소 보내기
+    private String buildSendAddressEmailContent(UserInsurance userInsurance) {
+        StringBuilder content = new StringBuilder();
+
+        String reason = userInsurance.getReason();
+        log.info("Email" + userInsurance.toString());
+        content.append("<div style=\"max-width: 600px; margin: auto; padding: 20px; font-family: Arial, sans-serif;\">")
+                .append("<div style=\"border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 20px;\">")
+                .append("<h2 style=\"text-align: center; color: #007bff;\">보험 가입 신청 완료</h2>")
+                .append("<h3 style=\"text-align: center; color: #007bff;\">아래 주소로 보험료를 입금해주세요.</h3>")
+                .append("<h3 style=\"text-align: center; color: #007bff;\">주소 0000000</h3>")
+                .append("<div style=\"border-top: 1px solid #ddd; padding-top: 10px;\">")
+                .append("<p><strong>보험명:</strong> ").append(userInsurance.getInsurance().getName()).append("</p>")
+                .append("<p><strong>회원명:</strong> ").append(userInsurance.getUser().getUsername()).append("</p>")
+                .append("<p><strong>가입일:</strong> ").append(userInsurance.getRegisterDate()).append("</p>")
+                .append("<p><strong>시작일:</strong> ").append(userInsurance.getStartDate()).append("</p>")
+                .append("<p><strong>종료일:</strong> ").append(userInsurance.getEndDate()).append("</p>")
+                .append("<p><strong>가입료:</strong> ").append(userInsurance.getRegisterPrice()).append("</p>")
+                .append("</div>")
+                .append("</div>")
+                .append("</div>");
+        return content.toString();
+    }
+
+    //관리자가 입금 확인 시에 가입 완료 메일
+    private String buildJoinEmailContent(UserInsurance userInsurance) {
+        StringBuilder content = new StringBuilder();
+
+        String reason = userInsurance.getReason();
+        log.info("Email" + userInsurance.toString());
+        content.append("<div style=\"max-width: 600px; margin: auto; padding: 20px; font-family: Arial, sans-serif;\">")
+                .append("<div style=\"border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 20px;\">")
+                .append("<h2 style=\"text-align: center; color: #007bff;\">보험 가입 완료</h2>")
+                .append("<div style=\"border-top: 1px solid #ddd; padding-top: 10px;\">")
+                .append("<p><strong>보험명:</strong> ").append(userInsurance.getInsurance().getName()).append("</p>")
+                .append("<p><strong>회원명:</strong> ").append(userInsurance.getUser().getUsername()).append("</p>")
+                .append("<p><strong>가입일:</strong> ").append(userInsurance.getRegisterDate()).append("</p>")
+                .append("<p><strong>시작일:</strong> ").append(userInsurance.getStartDate()).append("</p>")
+                .append("<p><strong>종료일:</strong> ").append(userInsurance.getEndDate()).append("</p>")
+                .append("<p><strong>가입료:</strong> ").append(userInsurance.getRegisterPrice()).append("</p>")
+                .append("</div>")
+                .append("</div>")
+                .append("</div>");
+        return content.toString();
+    }
+
+    //보상 진행 완료 시에 메일 보내기
+    private String buildCompensationEmailContent(UserInsurance userInsurance) {
         StringBuilder content = new StringBuilder();
 
         String reason = userInsurance.getReason();
@@ -66,7 +159,6 @@ public class EmailService {
                 .append("</div>")
                 .append("</div>")
                 .append("</div>");
-        //보상 금액 이후에 수정
         return content.toString();
     }
 }

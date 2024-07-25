@@ -19,15 +19,12 @@
     <h2>가상 화폐 지갑 수정</h2>
   </div>
   <h4 class="mb-3">가상 화폐 지갑 입력</h4>
-  <form action = "" th:action th:object="${wallet}" method="post">
+  <form action = "" th:action th:object="${walletUpdateForm}" method="post" novalidate>
     <div class="mb-3">
       <label for="inputWalletAccount" class="form-label">가상 화폐 지갑</label>
       <input type="text" id="inputWalletAccount" class="form-control" aria-describedby="inputWalletAccountBlock"
-             th:field="*{accountNum}" th:errorclass="field-error" placeholder="가상 화폐 지갑">
-      <div class="field-error" th:errors="*{accountNum}"></div>
-      <div id="currentPasswordHelpBlock" class="form-text">
-        가상 화폐 지갑을 입력해주세요.
-      </div>
+             th:field="*{accountAddress}" th:errorclass="field-error" placeholder="가상 화폐 지갑">
+      <div class="field-error" th:errors="*{accountAddress}"></div>
     </div>
     <hr class="my-4">
     <div class="row">
@@ -38,7 +35,7 @@
         <button type="button"
                 class="w-100 btn btn-secondary btn-lg"
                 onclick="location.href='home.html'"
-                th:onclick="|location.href='@{/userInfo}'|">취소</button>
+                th:onclick="|location.href='@{/user/info}'|">취소</button>
       </div>
     </div>
   </form>

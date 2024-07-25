@@ -1,16 +1,18 @@
 package graduationWork.server.controller;
 
+import graduationWork.server.domain.Address;
 import graduationWork.server.domain.User;
 import graduationWork.server.domain.UserInsurance;
-import graduationWork.server.domain.Wallet;
+import graduationWork.server.dto.AddressUpdateForm;
+import graduationWork.server.dto.MemberJoinForm;
 import graduationWork.server.dto.PasswordUpdateForm;
+import graduationWork.server.dto.WalletUpdateForm;
 import graduationWork.server.repository.InsuranceRepository;
 import graduationWork.server.security.PasswordEncoder;
 import graduationWork.server.service.UserInsuranceService;
 import graduationWork.server.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 //import org.springframework.security.core.Authentication;
@@ -37,30 +39,40 @@ public class UserController {
     private final PasswordEncoder passwordEncoder;
 
     @GetMapping("/join")
-    public String joinForm(@ModelAttribute User user) {
+    public String joinForm(@ModelAttribute MemberJoinForm memberJoinForm) {
         return "users/joinMemberForm";
     }
 
     @PostMapping("/join")
-    public String join(@Validated @ModelAttribute User user, BindingResult bindingResult, Model model) {
+    public String join(@Validated @ModelAttribute MemberJoinForm memberJoinForm, BindingResult bindingResult, Model model) {
 
-        String loginId = user.getLoginId();
-        if(userService.findByLoginId(loginId) != null) {
-            bindingResult.rejectValue("loginId", "loginId.exists", "이미 존재하는 로그인 ID 입니다.");
+        if(userService.checkLoginIdUnique(memberJoinForm.getLoginId())) {
+            bindingResult.rejectValue("loginId", "loginIdUnique");
+            return "users/joinMemberForm";
         }
 
         if(bindingResult.hasErrors()) {
-            model.addAttribute("user", user);
             return "users/joinMemberForm";
         }
+
+        Address address = new Address(memberJoinForm.getZipCode(), memberJoinForm.getRoadAddress(), memberJoinForm.getDetailAddress());
+
+        User user = new User();
+        user.setUsername(memberJoinForm.getUsername());
+        user.setLoginId(memberJoinForm.getLoginId());
+        user.setPassword(memberJoinForm.getPassword());
+        user.setEmail(memberJoinForm.getEmail());
+        user.setWalletAddress(memberJoinForm.getWalletAddress());
+        user.setAddress(address);
 
         userService.join(user);
         return "redirect:/";
     }
 
     @GetMapping("/user/info")
-    public String memberInfo(@ModelAttribute User user, HttpServletRequest request, Model model) {
-        User loginUser = (User) request.getSession().getAttribute(SessionConst.LOGIN_USER);
+    public String memberInfo(@ModelAttribute User user,  Model model, HttpSession session) {
+
+        User loginUser = (User) session.getAttribute("loginUser");
         model.addAttribute("loginUser", loginUser);
         return "users/userInfo";
     }
@@ -100,22 +112,51 @@ public class UserController {
         }
     }
 
+    @GetMapping("/user/addressUpdate")
+    public String addressUpdateForm(@ModelAttribute AddressUpdateForm addressUpdateForm) {
+        return "users/addressUpdateForm";
+    }
+
+    @PostMapping("/user/addressUpdate")
+    public String addressUpdate(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,
+                                @Validated @ModelAttribute AddressUpdateForm addressUpdateForm,
+                                BindingResult bindingResult, HttpSession session) {
+
+        Address address = new Address(addressUpdateForm.getZipCode(), addressUpdateForm.getRoadAddress(), addressUpdateForm.getDetailAddress());
+        userService.updateAddress(loginUser.getId(), address);
+
+        //업데이트 후에 loginUser 정보 갱신
+        User updatedUser = userService.findOne(loginUser.getId());
+        session.setAttribute(SessionConst.LOGIN_USER, updatedUser);
+
+        return "redirect:/user/info";
+    }
+
     @GetMapping("/user/walletAccountUpdate")
-    public String walletAccountUpdateForm(@ModelAttribute Wallet wallet) {
+    public String walletAccountUpdateForm(@ModelAttribute WalletUpdateForm walletUpdateForm) {
         return "users/accountUpdateForm";
     }
 
     @PostMapping("/user/walletAccountUpdate")
-    public String walletAccountUpdate(Wallet wallet, HttpSession session) {
+    public String walletAccountUpdate(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,
+                                      @Validated @ModelAttribute WalletUpdateForm walletUpdateForm,
+                                      BindingResult bindingResult, HttpSession session) {
 
-        User loginUser = (User) session.getAttribute("loginUser");
-        userService.updateWalletAccount(loginUser, wallet);
+        if(bindingResult.hasErrors()) {
+            return "users/accountUpdateForm";
+        }
+
+        userService.updateWalletAddress(loginUser.getId(), walletUpdateForm.getAccountAddress());
+
+        //업데이트 후에 loginUser 정보 갱신
+        User updatedUser = userService.findOne(loginUser.getId());
+        session.setAttribute(SessionConst.LOGIN_USER, updatedUser);
+
         return "redirect:/user/info";
     }
 
     @GetMapping("/user/insurances")
-    public String getUserInsurances(HttpSession session,Model model) {
-        User loginUser = (User) session.getAttribute("loginUser");
+    public String getUserInsurances(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,Model model) {
         Long loginUserId = loginUser.getId();
 
         List<UserInsurance> userInsurances = userInsuranceService.findUserInsurances(loginUserId);

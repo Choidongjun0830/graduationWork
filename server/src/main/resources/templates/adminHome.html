@@ -48,7 +48,7 @@
         </thead>
         <tbody>
         <tr th:each="userInsurance : ${userInsurances}">
-            <td><a href="postView.html" th:href="@{|/board/${userInsurance.id}|}" th:text="${userInsurance.id}">ID</a></td>
+            <td><a th:href="@{|/board/${userInsurance.id}|}" th:text="${userInsurance.id}">ID</a></td>
             <td th:text="${userInsurance.insurance.name}">보험명</td>
             <td th:text="${userInsurance.user.username}">이름</td>
             <td th:text="${userInsurance.startDate}">시작일</td>

@@ -1,5 +1,5 @@
 package graduationWork.server.enumurate;
 
 public enum InsuranceStatus {
-    ACTIVE, INACTIVE, COMPLETE, CANCELLED
+    JOINED, COMPLETE, CANCELLED, WAITING_JOIN
 }

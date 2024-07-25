@@ -3,6 +3,20 @@
 <head th:replace="fragments/header :: header">
   <title>졸업 작품</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <style>
+    .table td, .table th {
+      vertical-align: middle;
+      text-align: center;
+    }
+    .apply-btn {
+      width: 100%;
+      padding: 8px;
+    }
+    .search-form-container .form-group {
+      display: inline-block;
+      margin-right: 10px;
+    }
+  </style>
 </head>
 <body>
 <div class="container" style="max-width: 90%">
@@ -55,6 +69,7 @@
         <th scope="col">회원 이메일</th>
         <th scope="col">가입 보험료</th>
         <th scope="col">신청일</th>
+        <th scope="col">보험 상태</th>
         <th scope="col">보상 상태</th>
         <th scope="col">첨부 파일</th>
         <th scope="col">관리</th>
@@ -68,9 +83,21 @@
         <td th:text="${userInsurance.user.email}"></td>
         <td th:text="${userInsurance.registerPrice}"></td>
         <td th:text="${userInsurance.registerDate}"></td>
-        <td th:text="${userInsurance.compensationStatus}"></td>
         <td>
-          <button class="btn btn-link" type="button" data-toggle="collapse" th:attr="data-target='#fileList-' + ${userInsurance.id}">
+          <span th:if="${userInsurance.status.name() == 'WAITING_JOIN'}">입금 대기중</span>
+          <span th:if="${userInsurance.status.name() == 'JOINED'}">가입 완료</span>
+          <span th:if="${userInsurance.status.name() == 'CANCELLED'}">취소됨</span>
+        </td>
+        <td>
+          <span th:if="${userInsurance.compensationStatus.name() == 'NOT_SUBMITTED'}">미신청</span>
+          <span th:if="${userInsurance.compensationStatus.name() == 'IMPOSSIBLE'}">신청 불가</span>
+          <span th:if="${userInsurance.compensationStatus.name() == 'COMPENSATING'}">보상 진행중</span>
+          <span th:if="${userInsurance.compensationStatus.name() == 'COMPENSATED'}">보상 완료</span>
+        </td>
+        <td>
+          <button class="btn btn-link" type="button" data-toggle="collapse"
+                  th:attr="data-target='#fileList-' + ${userInsurance.id}"
+                  th:if="${userInsurance.compensationStatus.name() == 'COMPENSATING'}">
             첨부 파일 보기
           </button>
           <div th:id="'fileList-' + ${userInsurance.id}" class="collapse">
@@ -85,6 +112,9 @@
           <a th:if="${userInsurance.compensationStatus.name() == 'COMPENSATING'}"
              th:href="@{'/insurance/admin/compensation/manage?userInsuranceId=' + ${userInsurance.id}}"
              class="btn btn-warning apply-btn">보상 관리</a>
+          <a th:if="${userInsurance.status.name() == 'WAITING_JOIN'}"
+             th:href="@{'/insurance/admin/join/manage?userInsuranceId=' + ${userInsurance.id}}"
+             class="btn btn-warning apply-btn">입금 확인</a>
         </td>
       </tr>
       </tbody>

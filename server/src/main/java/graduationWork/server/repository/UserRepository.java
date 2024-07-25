@@ -57,4 +57,9 @@ public class UserRepository {
             return false;
         }
     }
+
+    public Boolean existsByLoginId(String loginId) {
+        User findUser = findByLoginId(loginId);
+        return findUser != null;
+    }
 }

@@ -50,7 +50,6 @@
             </thead>
             <tbody>
             <tr th:each="userInsurance : ${userInsurances}">
-
                 <td>
                     <span class="clickable-status" th:text="${userInsurance.insurance.name}" th:onclick="'window.location.href=\'/insurance/details/' + ${userInsurance.insurance.id} + '\';'">보험 이름</span>
                 </td>

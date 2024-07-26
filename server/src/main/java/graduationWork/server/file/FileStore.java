@@ -25,35 +25,62 @@ public class FileStore {
     }
 
     public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) throws IOException {
-        log.info(fileDir);
+
         List<UploadFile> storeFileResult = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
+            log.info("Storing file: " + multipartFile.getOriginalFilename());
             if(!multipartFile.isEmpty()) {
-                storeFileResult.add(storeFile(multipartFile));
+                log.info("File is not empty: " + multipartFile.getOriginalFilename());
+                try {
+                    storeFileResult.add(storeFile(multipartFile));
+                } catch (IOException e) {
+                    log.error("Failed to store file: " + multipartFile.getOriginalFilename(), e);
+                }
+            } else {
+                log.info("File is empty: " + multipartFile.getOriginalFilename());
             }
+        }
+        for (UploadFile uploadFile : storeFileResult) {
+            log.info("Upload File: " + uploadFile.getUploadFileName());
         }
         return storeFileResult;
     }
 
     public UploadFile storeFile(MultipartFile multipartFile) throws IOException {
         if(multipartFile.isEmpty()) {
+            log.info("File is empty: " + multipartFile.getOriginalFilename());
             return null;
         }
 
         String originalFilename = multipartFile.getOriginalFilename();
         String storeFileName = createStoreFileName(originalFilename);
 
+        log.info("Original Filename: " + originalFilename);
+        log.info("Store Filename: " + storeFileName);
+
         // 파일을 저장할 디렉토리가 존재하지 않으면 생성
         File file = new File(getFullPath(storeFileName));
         File dir = file.getParentFile();
         if (!dir.exists()) {
+            log.info("Directory does not exist, creating directory: " + dir.getAbsolutePath());
             dir.mkdirs();
+        } else {
+            log.info("Directory exists: " + dir.getAbsolutePath());
         }
 
-        multipartFile.transferTo(new File(getFullPath(storeFileName)));
+        log.info("Saving file to: " + getFullPath(storeFileName));
+        try {
+            multipartFile.transferTo(file);
+            log.info("File saved: " + getFullPath(storeFileName));
+        } catch (IOException e) {
+            log.error("Error saving file: " + getFullPath(storeFileName), e);
+            throw e;
+        }
 
         return new UploadFile(originalFilename, storeFileName);
     }
+
+
 
     public String createStoreFileName(String originalFilename) {
         String ext = extractExt(originalFilename);

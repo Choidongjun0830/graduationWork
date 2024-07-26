@@ -49,8 +49,7 @@ public class homeController {
     @PostMapping("/")
     public String searchInsurance(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,
                                   @Validated @ModelAttribute("delayForm") DelayCompensationApplyForm delayForm,
-                                  BindingResult bindingResult,
-                                  HttpSession session) {
+                                  BindingResult bindingResult) {
 
         if(bindingResult.hasErrors()){
             if(loginUser == null) {

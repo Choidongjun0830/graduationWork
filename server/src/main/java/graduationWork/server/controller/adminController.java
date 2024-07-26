@@ -95,7 +95,6 @@ public class adminController {
         checkRole(session);
 
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
-        userInsuranceService.setCompensationAmount(userInsuranceId);
 
         String sub = "보험 보상 진행을 위한 메일 전송";
         emailService.sendCompensationEmail(userInsuranceId, sub);

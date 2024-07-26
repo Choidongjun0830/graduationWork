@@ -232,7 +232,7 @@ public class InsuranceController {
     //파일 업로드
     @PostMapping("/insurance/compensation/apply/upload")
     public String upload(@RequestParam Long userInsuranceId,
-                           @ModelAttribute UploadCompensationApplyForm uploadForm,
+                           @ModelAttribute("uploadForm") UploadCompensationApplyForm uploadForm,
                            HttpSession session) throws IOException {
 
         User loginUser = (User) session.getAttribute("loginUser");
@@ -241,7 +241,6 @@ public class InsuranceController {
 
         return "redirect:/user/insurances";
     }
-
 
     //보험 보장 내역
     @GetMapping("/insurance/details/{insuranceId}")
@@ -253,4 +252,6 @@ public class InsuranceController {
 
         return "insurance/insuranceDetails";
     }
+
+
 }

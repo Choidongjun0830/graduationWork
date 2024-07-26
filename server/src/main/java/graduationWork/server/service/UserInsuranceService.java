@@ -114,6 +114,7 @@ public class UserInsuranceService {
             return false;
         } else {
             if (userFlight.getStatus().equals(FlightStatus.DELAYED)) {
+                setCompensationAmount(userInsuranceId);
                 if(userInsurance.getCompensationOption().equals(CompensationOption.OPTION_EMAIL)) {
                     userInsurance.setCompensationStatus(CompensationStatus.COMPENSATING);
                 }
@@ -132,8 +133,8 @@ public class UserInsuranceService {
 
         List<MultipartFile> files = uploadForm.getInsuranceDocuments();
         List<UploadFile> uploadFileList = fileStore.storeFiles(files);
-
         for (UploadFile uploadFile : uploadFileList) {
+            log.info("Service UploadFile: " + uploadFile.getUploadFileName());
             uploadFile.setUserInsurance(userInsurance);
             fileService.save(uploadFile);
         }
@@ -147,12 +148,8 @@ public class UserInsuranceService {
     public void setCompensationAmount(Long userInsuranceId) {
         UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
         String reason = userInsurance.getReason();
-        log.info(reason);
         Map<String, String> details = insuranceRepository.findDetails(userInsurance.getInsurance().getId());
-        log.info(details.toString());
         userInsurance.setCompensationAmount(details.get(reason));
-
-        log.info(userInsurance.getCompensationAmount());
     }
 
     public UserInsurance findOne(Long id) {

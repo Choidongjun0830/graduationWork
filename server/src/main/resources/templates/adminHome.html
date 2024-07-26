@@ -48,13 +48,18 @@
         </thead>
         <tbody>
         <tr th:each="userInsurance : ${userInsurances}">
-            <td><a th:href="@{|/board/${userInsurance.id}|}" th:text="${userInsurance.id}">ID</a></td>
+            <td><a th:href="@{|/user/insurances/${userInsurance.id}|}" th:text="${userInsurance.id}">ID</a></td>
             <td th:text="${userInsurance.insurance.name}">보험명</td>
             <td th:text="${userInsurance.user.username}">이름</td>
             <td th:text="${userInsurance.startDate}">시작일</td>
             <td th:text="${userInsurance.endDate}">만료일</td>
             <td th:text="${userInsurance.registerPrice}">가입료</td>
-            <td th:text="${userInsurance.compensationStatus}">보상 상태</td>
+            <td>
+                <span th:if="${userInsurance.compensationStatus.name() == 'NOT_SUBMITTED'}" >미신청</span>
+                <span th:if="${userInsurance.compensationStatus.name() == 'IMPOSSIBLE'}" >신청 불가</span>
+                <span th:if="${userInsurance.compensationStatus.name() == 'COMPENSATING'}" >보상 진행중</span>
+                <span th:if="${userInsurance.compensationStatus.name() == 'COMPENSATED'}" >보상 완료</span>
+            </td>
         </tr>
         </tbody>
     </table>

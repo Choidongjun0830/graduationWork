@@ -99,7 +99,6 @@ public class EmailService {
         StringBuilder content = new StringBuilder();
 
         String reason = userInsurance.getReason();
-        log.info("Email" + userInsurance.toString());
         content.append("<div style=\"max-width: 600px; margin: auto; padding: 20px; font-family: Arial, sans-serif;\">")
                 .append("<div style=\"border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 20px;\">")
                 .append("<h2 style=\"text-align: center; color: #007bff;\">보험 가입 신청 완료</h2>")

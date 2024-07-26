@@ -77,7 +77,7 @@
       </thead>
       <tbody>
       <tr th:each="userInsurance : ${userInsurances}">
-        <td th:text="${userInsurance.id}"></td>
+        <td><a th:href="@{|/user/insurances/${userInsurance.id}|}" th:text="${userInsurance.id}">ID</a></td>
         <td th:text="${userInsurance.insurance.name}"></td>
         <td th:text="${userInsurance.user.username}"></td>
         <td th:text="${userInsurance.user.email}"></td>

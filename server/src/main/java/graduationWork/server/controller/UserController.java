@@ -21,10 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -162,5 +159,15 @@ public class UserController {
         List<UserInsurance> userInsurances = userInsuranceService.findUserInsurances(loginUserId);
         model.addAttribute("userInsurances", userInsurances);
         return "users/insuranceListsForUser";
+    }
+
+    //유저가 가입한 보험의 세부 정보
+    @GetMapping("/user/insurances/{userInsuranceId}")
+    public String getUserInsuranceDetails(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,
+                                            @PathVariable("userInsuranceId") Long userInsuranceId, Model model) {
+
+        UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
+        model.addAttribute("userInsurance", userInsurance);
+        return "insurance/userInsuranceDetails";
     }
 }

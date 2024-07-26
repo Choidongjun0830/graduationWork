@@ -71,10 +71,6 @@ public class UserInsuranceRepository {
                 )
                 .fetch();
 
-        for (UserInsurance userInsurance1 : result) {
-            log.info(userInsurance1.toString());
-        }
-
         return result;
     }
 

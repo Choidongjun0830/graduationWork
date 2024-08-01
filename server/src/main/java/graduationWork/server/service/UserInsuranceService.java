@@ -66,7 +66,7 @@ public class UserInsuranceService {
         user.addUserInsurance(userInsurance);
 
         Period period = Period.between(startDate, endDate);
-        int days = period.getDays();
+        int days = period.getDays() + 1;
         int premium = findInsurance.getPremium();
         int registerPrice = premium * days;
         userInsurance.setRegisterPrice(NumberUtils.formatCurrency(registerPrice));

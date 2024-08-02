@@ -110,7 +110,8 @@ public class EmailService {
                 .append("<p><strong>가입일:</strong> ").append(userInsurance.getRegisterDate()).append("</p>")
                 .append("<p><strong>시작일:</strong> ").append(userInsurance.getStartDate()).append("</p>")
                 .append("<p><strong>종료일:</strong> ").append(userInsurance.getEndDate()).append("</p>")
-                .append("<p><strong>가입료:</strong> ").append(userInsurance.getRegisterPrice()).append("</p>")
+                .append("<p><strong>가입료(원):</strong> ").append(userInsurance.getRegisterPrice()).append("</p>")
+                .append("<p><strong>가입료(이더리움):</strong> ").append(userInsurance.getEtherRegisterPrice()).append("</p>")
                 .append("</div>")
                 .append("</div>")
                 .append("</div>");
@@ -132,7 +133,8 @@ public class EmailService {
                 .append("<p><strong>가입일:</strong> ").append(userInsurance.getRegisterDate()).append("</p>")
                 .append("<p><strong>시작일:</strong> ").append(userInsurance.getStartDate()).append("</p>")
                 .append("<p><strong>종료일:</strong> ").append(userInsurance.getEndDate()).append("</p>")
-                .append("<p><strong>가입료:</strong> ").append(userInsurance.getRegisterPrice()).append("</p>")
+                .append("<p><strong>가입료(원):</strong> ").append(userInsurance.getRegisterPrice()).append("</p>")
+                .append("<p><strong>가입료(이더리움):</strong> ").append(userInsurance.getEtherRegisterPrice()).append("</p>")
                 .append("</div>")
                 .append("</div>")
                 .append("</div>");

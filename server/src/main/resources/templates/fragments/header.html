@@ -70,6 +70,49 @@
     .form-row .col-4 {
       padding: 0;
     }
+    .wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh; /* Ensures the container is vertically centered */
+      background-color: #f0f0f0; /* Subtle background for contrast */
+      margin: 0; /* Remove default margin */
+    }
+    .receipt-container {
+      max-width: 600px;
+      border: 1px solid #ddd;
+      padding: 20px;
+      background-color: #f9f9f9;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      margin-top: 20px; /* Slight margin for better spacing */
+    }
+    .receipt-header {
+      margin-bottom: 30px;
+      text-align: center;
+      font-weight: bold;
+    }
+    .transaction-detail {
+      border-bottom: 1px dashed #ccc;
+      padding: 15px 0; /* Added padding for spacing */
+      margin-bottom: 15px; /* Added margin for more spacing */
+    }
+    .detail-label {
+      font-weight: bold;
+      width: 120px;
+      display: inline-block;
+    }
+    .detail-value {
+      display: inline-block;
+      word-wrap: break-word;
+      max-width: calc(100% - 130px);
+    }
+    .transaction-total {
+      font-weight: bold;
+      font-size: 1.1em;
+      margin-top: 20px;
+      text-align: right;
+    }
   </style>
   <title>졸업 작품</title>
 </head>

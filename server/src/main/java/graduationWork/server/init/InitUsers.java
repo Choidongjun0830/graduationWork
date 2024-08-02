@@ -50,7 +50,7 @@ public class InitUsers {
             user.setRole("ROLE_USER");
             user.setEmail("adong0808@naver.com");
             user.setJoinDate(LocalDate.now());
-            user.setWalletAddress("사용자 주소");
+            user.setWalletAddress("0x2F420eE5487923Da799D057Ee3BbFc631ba86cd7");
             em.persist(user);
         }
     }

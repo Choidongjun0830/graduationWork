@@ -4,6 +4,7 @@ import graduationWork.server.domain.*;
 import graduationWork.server.dto.*;
 import graduationWork.server.email.service.EmailService;
 import graduationWork.server.enumurate.FlightStatus;
+import graduationWork.server.ether.UpbitApiClient;
 import graduationWork.server.file.FileStore;
 import graduationWork.server.repository.FlightRepository;
 import graduationWork.server.utils.NumberUtils;
@@ -41,6 +42,7 @@ public class UserInsuranceService {
     private final FileStore fileStore;
     private final FileService fileService;
     private final EmailService emailService;
+    private final UpbitApiClient upbitApiClient;
 
     private static final Logger logger = LoggerFactory.getLogger(UserInsuranceService.class);
 
@@ -71,10 +73,11 @@ public class UserInsuranceService {
         int registerPrice = premium * days;
         userInsurance.setRegisterPrice(NumberUtils.formatCurrency(registerPrice));
 
+        double tradePrice = upbitApiClient.getTradePrice();
+        userInsurance.setEtherRegisterPrice(String.valueOf(registerPrice / tradePrice));
+
         Long userInsuranceId = userInsuranceRepository.save(userInsurance);
 
-//        String sub = "보험 가입 신청 완료";
-//        emailService.sendAddressEmail(userInsuranceId, sub);
         return userInsuranceId;
     }
 
@@ -163,6 +166,10 @@ public class UserInsuranceService {
 
     public List<UserInsurance> findAll() {
         return userInsuranceRepository.findAll();
+    }
+
+    public List<UserInsurance> findAllPendingUserInsurances() {
+        return userInsuranceRepository.findAllPendingUserInsurances();
     }
 
     public List<UserInsurance> findAllUserInsurances(InsuranceSearch insuranceSearch) {

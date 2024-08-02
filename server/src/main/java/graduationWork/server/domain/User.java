@@ -45,6 +45,9 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<UserInsurance> userInsurances = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<Transactions> transactions = new ArrayList<>();
+
     //==연관 관계 편의 메서드==//
 
     public void addUserInsurance(UserInsurance userInsurance) {

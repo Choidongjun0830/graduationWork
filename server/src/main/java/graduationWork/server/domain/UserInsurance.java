@@ -48,6 +48,8 @@ public class UserInsurance {
 
     private String registerPrice;
 
+    private String etherRegisterPrice;
+
     private String reason;
 
     private LocalDate occurrenceDate;

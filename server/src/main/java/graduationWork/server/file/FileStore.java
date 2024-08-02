@@ -80,8 +80,6 @@ public class FileStore {
         return new UploadFile(originalFilename, storeFileName);
     }
 
-
-
     public String createStoreFileName(String originalFilename) {
         String ext = extractExt(originalFilename);
         String uuid = UUID.randomUUID().toString();

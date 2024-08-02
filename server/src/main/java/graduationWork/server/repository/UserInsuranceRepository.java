@@ -10,6 +10,7 @@ import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.dto.InsuranceSearch;
 import graduationWork.server.enumurate.CompensationOption;
 import graduationWork.server.enumurate.CompensationStatus;
+import graduationWork.server.enumurate.InsuranceStatus;
 import graduationWork.server.enumurate.InsuranceType;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -53,6 +54,12 @@ public class UserInsuranceRepository {
         Long userId = user.getId();
         return em.createQuery("select ui from UserInsurance ui where ui.user.id = :userId", UserInsurance.class)
                 .setParameter("userId", userId)
+                .getResultList();
+    }
+
+    public List<UserInsurance> findAllPendingUserInsurances() {
+        return em.createQuery("select ui from UserInsurance ui where ui.status = :status", UserInsurance.class)
+                .setParameter("status", InsuranceStatus.WAITING_JOIN)
                 .getResultList();
     }
 

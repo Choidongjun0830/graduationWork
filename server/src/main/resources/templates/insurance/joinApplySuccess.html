@@ -13,13 +13,14 @@
         보험 가입 신청이 완료되었습니다. 아래 주소로 보험료를 지불해주세요.
     </div>
     <div class="py-5 text-center">
-        가상 화폐 주소
+        <strong>0x0D39Cc3Efc5B7A7821F34695A877228Ae66fE52b</strong>
     </div>
     <div class="card">
         <div class="card-body">
             <h5 class="card-title" th:text="${userInsurance.insurance.name}">보험 이름</h5>
             <p class="card-text">
-                <strong>보험료:</strong> <span th:text="${userInsurance.registerPrice}">지불할 보험료</span><br>
+                <strong>보험료(원):</strong> <span th:text="${userInsurance.registerPrice}">지불할 보험료</span><br>
+                <strong>보험료(이더리움):</strong> <span th:text="${userInsurance.etherRegisterPrice}">지불할 보험료</span><br>
                 <strong>보험 시작 날짜:</strong> <span th:text="${userInsurance.startDate}">시작 날짜</span><br>
                 <strong>보험 종료 날짜:</strong> <span th:text="${userInsurance.endDate}">종료 날짜</span><br>
             </p>

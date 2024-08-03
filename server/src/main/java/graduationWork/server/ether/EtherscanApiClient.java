@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import graduationWork.server.dto.EtherPayReceipt;
 import graduationWork.server.repository.TransactionsRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -22,12 +23,14 @@ public class EtherscanApiClient {
     private final TransactionsRepository transactionsRepository;
 
     private static final String API_URL = "https://api-sepolia.etherscan.io/api";
-    private static final String API_KEY = "4EKVU1Z1ZX27FPAEDM5BJJDIR12VJGTCIJ"; // 이더스캔 API 키
+
+    @Value("${etherscan.api.key}") // application.properties에 정의된 API 키를 가져옵니다.
+    private String apiKey;
 
 
     public boolean checkPayment(String userWalletAddress, double expectedAmount) {
         try {
-            String urlString = API_URL + "?module=account&action=txlist&address=YOUR_INSURANCE_COMPANY_ADDRESS&apikey=" + API_KEY;
+            String urlString = API_URL + "?module=account&action=txlist&address=YOUR_INSURANCE_COMPANY_ADDRESS&apikey=" + apiKey;
             URL url = new URL(urlString);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -57,7 +60,7 @@ public class EtherscanApiClient {
     public List<EtherPayReceipt> getReceipts(String address, String customerFromAddress) {
         try {
             // 이더스캔 API 요청 URL 생성
-            String urlString = API_URL + "?module=account&action=txlist&address=" + address + "&apikey=" + API_KEY;
+            String urlString = API_URL + "?module=account&action=txlist&address=" + address + "&apikey=" + apiKey;
             URL url = new URL(urlString);
 
             // HTTP 연결 설정

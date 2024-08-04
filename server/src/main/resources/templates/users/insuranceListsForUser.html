@@ -1,37 +1,47 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
-<head th:replace="fragments/header :: header"/>
-<title>졸업 작품</title>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-<style>
-    .table td, .table th {
-        vertical-align: middle;
-        text-align: center;
-    }
-    .apply-btn {
-        width: 100%;
-        padding: 8px;
-    }
-    .hidden {
-        display: none;
-    }
-    .clickable-status {
-        text-decoration: underline;
-        cursor: pointer;
-        color: blue;
-    }
-</style>
+
+<head th:replace="fragments/header :: header">
+    <title>졸업 작품</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <style>
+        .table td,
+        .table th {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .apply-btn {
+            width: 100%;
+            padding: 8px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .clickable-status {
+            text-decoration: underline;
+            cursor: pointer;
+            color: blue;
+        }
+
+        .alert-info {
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
 </head>
+
 <body>
 <div class="container" style="max-width: 80%">
     <div class="py-5 text-center">
         <h2>보험 신청 정보</h2>
     </div>
-    <!-- Hidden div to display deposit address -->
-    <div id="depositAddress" class="hidden container" style="max-width: 60%; margin-top: 20px;">
+    <div id="depositAddress" class="hidden" style="max-width: 60%; margin: 20px auto;">
         <div class="alert alert-info" role="alert">
-            <strong>무통장 입금 주소:</strong> 은행명: XXX, 계좌번호: 123-456-789, 예금주: 홍길동
+            <strong>입금 주소:</strong> 0x0D39Cc3Efc5B7A7821F34695A877228Ae66fE52b
         </div>
     </div>
     <div class="table-responsive">
@@ -46,34 +56,44 @@
                 <th scope="col">보험 상태</th>
                 <th scope="col">보상 상태</th>
                 <th scope="col">보상 신청</th>
+                <th scope="col">거래 영수증</th>
             </tr>
             </thead>
             <tbody>
             <tr th:each="userInsurance : ${userInsurances}">
                 <td>
-                    <span class="clickable-status" th:text="${userInsurance.insurance.name}" th:onclick="'window.location.href=\'/insurance/details/' + ${userInsurance.insurance.id} + '\';'">보험 이름</span>
+                            <span class="clickable-status" th:text="${userInsurance?.insurance?.name}"
+                                  th:onclick="'window.location.href=\'/insurance/details/' + ${userInsurance?.insurance?.id} + '\';'">보험 이름</span>
                 </td>
-                <td th:text="${userInsurance.registerDate}">가입 날짜</td>
-                <td th:text="${userInsurance.startDate}">시작 날짜</td>
-                <td th:text="${userInsurance.endDate}">만료일</td>
-                <td th:text="${userInsurance.registerPrice}">보험료</td>
+                <td th:text="${userInsurance?.registerDate}">가입 날짜</td>
+                <td th:text="${userInsurance?.startDate}">시작 날짜</td>
+                <td th:text="${userInsurance?.endDate}">만료일</td>
+                <td th:text="${userInsurance?.registerPrice}">보험료</td>
                 <td>
-                    <span th:if="${userInsurance.status.name() == 'WAITING_JOIN'}" class="clickable-status" th:onclick="showDepositAddress()">입금 대기중</span>
-                    <span th:if="${userInsurance.status.name() == 'JOINED'}">가입 완료</span>
-                    <span th:if="${userInsurance.status.name() == 'CANCELLED'}">취소됨</span>
-                </td>
-                <td>
-                    <span th:if="${userInsurance.compensationStatus.name() == 'NOT_SUBMITTED'}" >미신청</span>
-                    <span th:if="${userInsurance.compensationStatus.name() == 'IMPOSSIBLE'}" >신청 불가</span>
-                    <span th:if="${userInsurance.compensationStatus.name() == 'COMPENSATING'}" >보상 진행중</span>
-                    <span th:if="${userInsurance.compensationStatus.name() == 'COMPENSATED'}" >보상 완료</span>
+                    <span th:if="${userInsurance?.status?.name() == 'WAITING_JOIN'}" class="clickable-status" onclick="showDepositAddress()">입금 대기중</span>
+                    <span th:if="${userInsurance?.status?.name() == 'JOINED'}">가입 완료</span>
+                    <span th:if="${userInsurance?.status?.name() == 'CANCELLED'}">취소됨</span>
                 </td>
                 <td>
-                    <form th:action="@{/insurance/compensation/apply}" method="get" th:if="${userInsurance.status.name() != 'WAITING_JOIN' and userInsurance.compensationStatus.name() == 'NOT_SUBMITTED'}">
-                        <input type="hidden" name="userInsuranceId" th:value="${userInsurance.id}" />
+                    <span th:if="${userInsurance?.compensationStatus?.name() == 'NOT_SUBMITTED'}">미신청</span>
+                    <span th:if="${userInsurance?.compensationStatus?.name() == 'IMPOSSIBLE'}">신청 불가</span>
+                    <span th:if="${userInsurance?.compensationStatus?.name() == 'COMPENSATING'}">보상 진행중</span>
+                    <span th:if="${userInsurance?.compensationStatus?.name() == 'COMPENSATED'}">보상 완료</span>
+                </td>
+                <td>
+                    <form th:action="@{/insurance/compensation/apply}" method="get"
+                          th:if="${userInsurance?.status?.name() != 'WAITING_JOIN' and userInsurance?.compensationStatus?.name() == 'NOT_SUBMITTED'}">
+                        <input type="hidden" name="userInsuranceId" th:value="${userInsurance?.id}" />
                         <button class="btn btn-primary apply-btn" type="submit">보상 신청</button>
                     </form>
-                    <span th:if="${userInsurance.compensationStatus.name() != 'NOT_SUBMITTED'}">신청 완료</span>
+                    <span th:if="${userInsurance?.compensationStatus?.name() != 'NOT_SUBMITTED'}">신청 완료</span>
+                    <span th:if="${userInsurance?.status?.name() != 'WAITING_JOIN'}">보상 미신청</span>
+                </td>
+                <td>
+                            <span th:if="${userInsurance?.status?.name() != 'WAITING_JOIN'}">
+                                <a th:href="@{/user/insurances/deposit/receipt/{insuranceId}(insuranceId=${userInsurance?.id})}" class="btn btn-info">입금 영수증 보기</a>
+                            </span>
+                    <span th:if="${userInsurance?.status?.name() == 'WAITING_JOIN'}">입금 내역 없음</span>
                 </td>
             </tr>
             </tbody>
@@ -84,7 +104,7 @@
 <script>
     function showDepositAddress() {
         // Hide all deposit address divs first
-        document.querySelectorAll('.hidden').forEach(function(div) {
+        document.querySelectorAll('.hidden').forEach(function (div) {
             div.style.display = 'none';
         });
 
@@ -96,6 +116,8 @@
     }
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous">
+</script>
 </body>
+
 </html>

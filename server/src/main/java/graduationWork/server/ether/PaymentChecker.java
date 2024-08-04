@@ -1,7 +1,9 @@
 package graduationWork.server.ether;
 
+import graduationWork.server.domain.Transactions;
 import graduationWork.server.domain.User;
 import graduationWork.server.domain.UserInsurance;
+import graduationWork.server.dto.EtherPayReceipt;
 import graduationWork.server.email.service.EmailService;
 import graduationWork.server.enumurate.InsuranceStatus;
 import graduationWork.server.service.TransactionsService;
@@ -24,8 +26,10 @@ public class PaymentChecker {
     private final TransactionsService transactionsService;
     private final EmailService emailService;
 
+    String transactionAddress = "0x0D39Cc3Efc5B7A7821F34695A877228Ae66fE52b";
+
     @Transactional
-    @Scheduled(fixedRate = 300000) //2분마다 실행
+    @Scheduled(fixedRate = 120000) //2분마다 실행
     public void checkPayment() {
         checkUserPayments();
     }
@@ -41,14 +45,22 @@ public class PaymentChecker {
             log.info("from: {}", from);
             log.info("Ether register price: {}", etherRegisterPrice);
 
-            boolean paymentReceived = etherscanApiClient.checkPayment(from, Double.parseDouble(etherRegisterPrice));
-            log.info("payment received: {}", paymentReceived);
-            if (paymentReceived) {
+            EtherPayReceipt etherPayReceipt = etherscanApiClient.checkPayment(from, Double.parseDouble(etherRegisterPrice));
+            log.info("payment received: {}", etherPayReceipt);
+            if (etherPayReceipt != null) {
                 //거래 상태 업데이트
-                log.info("userInsurance:", userInsurance.getInsurance().getName());
-                log.info("userInsurance:", userInsurance.getUser());
                 userInsurance.setStatus(InsuranceStatus.JOINED);
                 //트랜잭션 테이블 생각해보기
+                Transactions transactions = new Transactions();
+                transactions.setUser(userInsurance.getUser());
+                transactions.setFromAddress(from);
+                transactions.setToAddress(etherPayReceipt.getTo());
+                transactions.setName(userInsurance.getInsurance().getName() + " 가입 - " + userInsurance.getUser().getUsername());
+                transactions.setTimestamp(etherPayReceipt.getTimestamp());
+                transactions.setValue(etherRegisterPrice);
+                transactions.setHash(etherPayReceipt.getHash());
+                transactions.setUserInsurance(userInsurance);
+                transactionsService.save(transactions);
 
                 notifyUser(userInsurance.getId());
             }

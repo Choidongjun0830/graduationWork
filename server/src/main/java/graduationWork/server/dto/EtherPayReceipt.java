@@ -14,4 +14,6 @@ public class EtherPayReceipt {
     private String to;
 
     private String value;
+
+
 }

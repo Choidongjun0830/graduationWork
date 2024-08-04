@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
@@ -30,9 +32,16 @@ public class EtherscanApiClient {
     private String apiKey;
 
 
-    public boolean checkPayment(String userWalletAddress, double expectedAmount) {
+    public EtherPayReceipt checkPayment(String address, double expectedAmount) {
         try {
-            String urlString = API_URL + "?module=account&action=txlist&address=" + userWalletAddress + "&apikey=" + apiKey;
+            String urlString = API_URL + "?module=account&action=txlist"
+                    + "&address=" + address
+                    + "&startblock=0"
+                    + "&endblock=99999999"
+                    + "&page=1"
+                    + "&offset=1"
+                    + "&sort=desc"
+                    + "&apikey=" + apiKey;
             URL url = new URL(urlString);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -46,25 +55,37 @@ public class EtherscanApiClient {
                 for (JsonNode jsonNode : resultArray) {
                     String from = jsonNode.get("from").asText();
                     double value = jsonNode.get("value").asDouble() / 1e18; //Wei를 Etherium으로
+                    BigDecimal roundedValue = new BigDecimal(value).setScale(8, RoundingMode.HALF_UP);
+                    double finalValue = roundedValue.doubleValue();
 
-                    log.info("real" + from + ": " + value);
-                    log.info("expected" + userWalletAddress + ": " + expectedAmount);
+                    BigDecimal roundedExpectedValue = new BigDecimal(expectedAmount).setScale(8, RoundingMode.HALF_UP);
+                    double finalExpectedValue = roundedExpectedValue.doubleValue();
+
+                    log.info("real" + from + ": " + finalValue);
+                    log.info("expected" + address + ": " + finalExpectedValue);
                     //거래 찾기
-                    if (from.equalsIgnoreCase(userWalletAddress) && value == expectedAmount) { //etherscan에서 가져오는건 모두 소문자. 크거나 같다로 하면 안됨.
-                        return true;
+                    if (from.equalsIgnoreCase(address) && finalValue == finalExpectedValue) { //etherscan에서 가져오는건 모두 소문자. 크거나 같다로 하면 안됨.
+                        return convertToEtherPayReceipt(jsonNode);
                     }
                 }
             }
         } catch (Exception e){
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public List<EtherPayReceipt> getReceipts(String address, String customerFromAddress) {
         try {
             // 이더스캔 API 요청 URL 생성
-            String urlString = API_URL + "?module=account&action=txlist&address=" + address + "&apikey=" + apiKey + "&sort=desc";
+            String urlString = API_URL + "?module=account&action=txlist"
+                                        + "&address=" + address
+                                        + "&startblock=0"
+                                        + "&endblock=99999999"
+//                                        + "&page=1"
+//                                        + "&offset=1"
+                                        + "&sort=desc"
+                                        + "&apikey=" + apiKey;
             URL url = new URL(urlString);
 
             // HTTP 연결 설정
@@ -114,7 +135,7 @@ public class EtherscanApiClient {
 
     private EtherPayReceipt convertToEtherPayReceipt(JsonNode transaction) {
         EtherPayReceipt etherTransaction = new EtherPayReceipt();
-        etherTransaction.setTimestamp(Long.parseLong(transaction.get("timeStamp").asText()));
+        etherTransaction.setTimestamp(transaction.get("timeStamp").asLong());
         etherTransaction.setHash(transaction.get("hash").asText());
         etherTransaction.setFrom(transaction.get("from").asText());
         etherTransaction.setTo(transaction.get("to").asText());

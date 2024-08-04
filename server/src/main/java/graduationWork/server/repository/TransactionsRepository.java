@@ -37,13 +37,13 @@ public class TransactionsRepository {
     }
 
     public List<Transactions> findByFrom(String fromAddress) {
-        return em.createQuery("select t from Transactions t where t.from = :fromAddress", Transactions.class)
+        return em.createQuery("select t from Transactions t where t.fromAddress = :fromAddress", Transactions.class)
                 .setParameter("fromAddress", fromAddress)
                 .getResultList();
     }
 
     public List<Transactions> findByFromAndValue(String fromAddress, String value) {
-        return em.createQuery("select t from Transactions t where t.from = :fromAddress and t.value = :value", Transactions.class)
+        return em.createQuery("select t from Transactions t where t.fromAddress = :fromAddress and t.value = :value", Transactions.class)
                 .setParameter("fromAddress", fromAddress)
                 .setParameter("value", value)
                 .getResultList();

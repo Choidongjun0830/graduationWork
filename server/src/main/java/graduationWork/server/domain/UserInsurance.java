@@ -76,14 +76,8 @@ public class UserInsurance {
     @Override
     public String toString() {
         return "UserInsurance{" +
-                "insurance=" + insurance +
-                ", user=" + user +
-                ", registerDate=" + registerDate +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
+                "id=" + id +
                 ", status=" + status +
-                ", compensationStatus=" + compensationStatus +
-                ", registerPrice=" + registerPrice +
                 '}';
     }
 }

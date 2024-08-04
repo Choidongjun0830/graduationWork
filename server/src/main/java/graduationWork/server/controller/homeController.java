@@ -105,5 +105,13 @@ public class homeController {
         return "insurance/searchResult";
     }
 
+    @GetMapping("/sendEther")
+    public String sendEther() {
+        return "ether/sendEther";
+    }
 
+    @GetMapping("/sendEther/confirmation")
+    public String sendConfirmation() {
+        return "ether/confirmation"; // 트랜잭션이 완료된 후 이동할 페이지 경로
+    }
 }

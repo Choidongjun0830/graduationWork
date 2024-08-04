@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import graduationWork.server.dto.EtherPayReceipt;
 import graduationWork.server.repository.TransactionsRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class EtherscanApiClient {
@@ -30,7 +32,7 @@ public class EtherscanApiClient {
 
     public boolean checkPayment(String userWalletAddress, double expectedAmount) {
         try {
-            String urlString = API_URL + "?module=account&action=txlist&address=YOUR_INSURANCE_COMPANY_ADDRESS&apikey=" + apiKey;
+            String urlString = API_URL + "?module=account&action=txlist&address=" + userWalletAddress + "&apikey=" + apiKey;
             URL url = new URL(urlString);
 
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -45,8 +47,10 @@ public class EtherscanApiClient {
                     String from = jsonNode.get("from").asText();
                     double value = jsonNode.get("value").asDouble() / 1e18; //Wei를 Etherium으로
 
+                    log.info("real" + from + ": " + value);
+                    log.info("expected" + userWalletAddress + ": " + expectedAmount);
                     //거래 찾기
-                    if (from.equals(userWalletAddress) && value >= expectedAmount) {
+                    if (from.equalsIgnoreCase(userWalletAddress) && value == expectedAmount) { //etherscan에서 가져오는건 모두 소문자. 크거나 같다로 하면 안됨.
                         return true;
                     }
                 }
@@ -60,7 +64,7 @@ public class EtherscanApiClient {
     public List<EtherPayReceipt> getReceipts(String address, String customerFromAddress) {
         try {
             // 이더스캔 API 요청 URL 생성
-            String urlString = API_URL + "?module=account&action=txlist&address=" + address + "&apikey=" + apiKey;
+            String urlString = API_URL + "?module=account&action=txlist&address=" + address + "&apikey=" + apiKey + "&sort=desc";
             URL url = new URL(urlString);
 
             // HTTP 연결 설정

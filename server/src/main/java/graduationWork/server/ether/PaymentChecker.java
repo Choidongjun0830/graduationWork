@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -23,21 +24,29 @@ public class PaymentChecker {
     private final TransactionsService transactionsService;
     private final EmailService emailService;
 
-//    @Scheduled(fixedRate = 18000) //3분마다 실행
+    @Transactional
+    @Scheduled(fixedRate = 300000) //2분마다 실행
     public void checkPayment() {
         checkUserPayments();
     }
 
     private void checkUserPayments() {
         List<UserInsurance> allPendingUserInsurances = userInsuranceService.findAllPendingUserInsurances();
+        log.info("Pending user insurances: {}", allPendingUserInsurances);
         for (UserInsurance userInsurance : allPendingUserInsurances) {
+            log.info("Checking user insurance: {}", userInsurance);
             String from = userInsurance.getUser().getWalletAddress();
             String etherRegisterPrice = userInsurance.getEtherRegisterPrice();
 
-            boolean paymentReceived = etherscanApiClient.checkPayment(from, Double.parseDouble(etherRegisterPrice));
+            log.info("from: {}", from);
+            log.info("Ether register price: {}", etherRegisterPrice);
 
+            boolean paymentReceived = etherscanApiClient.checkPayment(from, Double.parseDouble(etherRegisterPrice));
+            log.info("payment received: {}", paymentReceived);
             if (paymentReceived) {
                 //거래 상태 업데이트
+                log.info("userInsurance:", userInsurance.getInsurance().getName());
+                log.info("userInsurance:", userInsurance.getUser());
                 userInsurance.setStatus(InsuranceStatus.JOINED);
                 //트랜잭션 테이블 생각해보기
 

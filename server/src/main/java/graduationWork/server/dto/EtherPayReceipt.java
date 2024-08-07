@@ -5,6 +5,8 @@ import lombok.Data;
 @Data
 public class EtherPayReceipt {
 
+    private String name;
+
     private Long timestamp;
 
     private String hash;
@@ -15,5 +17,6 @@ public class EtherPayReceipt {
 
     private String value;
 
+    private String krwValue;
 
 }

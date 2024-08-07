@@ -141,6 +141,7 @@ public class UserInsuranceService {
             uploadFile.setUserInsurance(userInsurance);
             fileService.save(uploadFile);
         }
+        setCompensationAmount(userInsuranceId);
 
         userInsurance.setFiles(uploadFileList);
         userInsurance.setCompensationStatus(CompensationStatus.COMPENSATING);

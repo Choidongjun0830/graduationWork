@@ -10,6 +10,7 @@ import graduationWork.server.service.TransactionsService;
 import graduationWork.server.service.UserInsuranceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,10 +27,11 @@ public class PaymentChecker {
     private final TransactionsService transactionsService;
     private final EmailService emailService;
 
-    String transactionAddress = "0x0D39Cc3Efc5B7A7821F34695A877228Ae66fE52b";
+    @Value("${etherscan.contract.address}")
+    private String contractAddress;
 
     @Transactional
-    @Scheduled(fixedRate = 120000) //2분마다 실행
+    @Scheduled(fixedRate = 60000) //2분마다 실행
     public void checkPayment() {
         checkUserPayments();
     }
@@ -51,16 +53,8 @@ public class PaymentChecker {
                 //거래 상태 업데이트
                 userInsurance.setStatus(InsuranceStatus.JOINED);
                 //트랜잭션 테이블 생각해보기
-                Transactions transactions = new Transactions();
-                transactions.setUser(userInsurance.getUser());
-                transactions.setFromAddress(from);
-                transactions.setToAddress(etherPayReceipt.getTo());
-                transactions.setName(userInsurance.getInsurance().getName() + " 가입 - " + userInsurance.getUser().getUsername());
-                transactions.setTimestamp(etherPayReceipt.getTimestamp());
-                transactions.setValue(etherRegisterPrice);
-                transactions.setHash(etherPayReceipt.getHash());
-                transactions.setUserInsurance(userInsurance);
-                transactionsService.save(transactions);
+                String name = userInsurance.getInsurance().getName() + " 가입 - " + userInsurance.getUser().getUsername();
+                transactionsService.save(name, userInsurance.getId(), userInsurance.getUser().getId(), from, contractAddress, etherRegisterPrice, etherPayReceipt);
 
                 notifyUser(userInsurance.getId());
             }

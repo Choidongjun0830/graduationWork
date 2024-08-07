@@ -1,28 +1,28 @@
 package graduationWork.server.controller;
 
 import graduationWork.server.domain.*;
-import graduationWork.server.dto.CompensationApplyForm;
-import graduationWork.server.dto.DelayCompensationApplyForm;
-import graduationWork.server.dto.InsuranceJoinDateSelectForm;
-import graduationWork.server.dto.UploadCompensationApplyForm;
+import graduationWork.server.dto.*;
+import graduationWork.server.enumurate.CompensationOption;
 import graduationWork.server.enumurate.FlightStatus;
 import graduationWork.server.enumurate.InsuranceType;
+import graduationWork.server.ether.UpbitApiClient;
+import graduationWork.server.ether.Web3jClient;
 import graduationWork.server.file.FileStore;
-import graduationWork.server.service.FlightService;
-import graduationWork.server.service.InsuranceService;
-import graduationWork.server.service.UserInsuranceService;
-import graduationWork.server.service.UserService;
+import graduationWork.server.service.*;
 import graduationWork.server.utils.DateTimeUtils;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.web3j.utils.Convert;
 
 import java.io.IOException;
+import java.math.BigInteger;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -39,6 +39,12 @@ public class InsuranceController {
     private final UserInsuranceService userInsuranceService;
     private final FileStore fileStore;
     private final FlightService flightService;
+    private final Web3jClient web3jClient;
+    private final TransactionsService transactionsService;
+    private final UpbitApiClient upbitApiClient;
+
+    @Value("${etherscan.contract.address}")
+    private String contractAddress;
 
     @GetMapping("/insurance/new")
     public String join(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser) {
@@ -217,7 +223,55 @@ public class InsuranceController {
         User loginUser = (User) session.getAttribute("loginUser");
         userInsuranceService.applyDelayCompensation(userInsuranceId, loginUser.getId(), delayForm);
 
-        return "redirect:/user/insurances";
+        return "redirect:/insurance/compensation/apply/flightDelay/confirm?userInsuranceId="+userInsuranceId;
+    }
+
+    //보상 완료
+    @GetMapping( "/insurance/compensation/apply/flightDelay/confirm")
+    public String flightCompensationConfirm(@RequestParam Long userInsuranceId, Model model,
+                                        @SessionAttribute(name = SessionConst.LOGIN_USER, required = true) User loginUser) {
+
+        UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
+        CompensationOption option = userInsurance.getCompensationOption();
+        String compensationAmount = userInsurance.getCompensationAmount();
+        double doubleCompensationAmount = Double.parseDouble(compensationAmount.replace("만원", "0000"));
+        System.out.println("doubleCompensationAmount = " + doubleCompensationAmount);
+        double tradePrice = upbitApiClient.getTradePrice();
+        String compensationAmountInEther = String.valueOf(doubleCompensationAmount / tradePrice);
+        BigInteger compensationAmountInWei = Convert.toWei(compensationAmountInEther, Convert.Unit.ETHER).toBigInteger();
+
+        User user = userInsurance.getUser();
+
+        if (option == CompensationOption.OPTION_AUTO) {
+            String amount = userInsurance.getCompensationAmount();
+            String userWalletAddress = user.getWalletAddress();
+
+            CompensationDto compensationDto = web3jClient.sendCompensation(userInsurance.getUser().getWalletAddress(), String.valueOf(compensationAmountInWei));
+            Long timestamp = compensationDto.getTimestamp();
+            String hash = compensationDto.getHash();
+            String name = userInsurance.getInsurance().getName() + " 보상 - " + userInsurance.getUser().getUsername();
+
+            EtherPayReceipt etherPayReceipt = new EtherPayReceipt();
+            etherPayReceipt.setName(name);
+            etherPayReceipt.setTimestamp(timestamp);
+            etherPayReceipt.setFrom(contractAddress);
+            etherPayReceipt.setTo(userWalletAddress);
+            etherPayReceipt.setHash(hash);
+            etherPayReceipt.setValue(compensationAmountInEther);
+            etherPayReceipt.setKrwValue(compensationAmount);
+            model.addAttribute("etherPayReceipt", etherPayReceipt);
+            //DB에 트랜잭션 저장까지
+            transactionsService.save(name, userInsuranceId, user.getId(), contractAddress, userWalletAddress, amount, etherPayReceipt);
+
+            return "insurance/flightAutoCompensationConfirm";
+        }
+        else if (option == CompensationOption.OPTION_EMAIL) {
+            model.addAttribute("userInsurance", userInsuranceService.findOne(userInsuranceId));
+            return "insurance/emailCompensationConfirm";
+        }
+        else{
+            return "redirect:/";
+        }
     }
 
     //파일 업로드 폼
@@ -232,14 +286,20 @@ public class InsuranceController {
     //파일 업로드
     @PostMapping("/insurance/compensation/apply/upload")
     public String upload(@RequestParam Long userInsuranceId,
-                           @ModelAttribute("uploadForm") UploadCompensationApplyForm uploadForm,
+                           @ModelAttribute("uploadForm") UploadCompensationApplyForm uploadForm, Model model,
                            HttpSession session) throws IOException {
 
         User loginUser = (User) session.getAttribute("loginUser");
 
         userInsuranceService.applyUploadCompensation(userInsuranceId, loginUser.getId(), uploadForm);
 
-        return "redirect:/user/insurances";
+        return "redirect:/insurance/compensation/apply/upload/confirm?userInsuranceId="+userInsuranceId;
+    }
+
+    @GetMapping("insurance/compensation/apply/upload/confirm")
+    public String uploadConfirm(@RequestParam Long userInsuranceId, Model model) {
+        model.addAttribute("userInsurance", userInsuranceService.findOne(userInsuranceId));
+        return "insurance/emailCompensationConfirm";
     }
 
     //보험 보장 내역

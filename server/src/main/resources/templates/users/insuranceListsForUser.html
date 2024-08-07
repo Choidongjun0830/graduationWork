@@ -41,7 +41,7 @@
     </div>
     <div id="depositAddress" class="hidden" style="max-width: 60%; margin: 20px auto;">
         <div class="alert alert-info" role="alert">
-            <strong>입금 주소:</strong> 0x0D39Cc3Efc5B7A7821F34695A877228Ae66fE52b
+            <strong>입금 주소:</strong> 0xE564Bd624b37C8a91E40C0fBb9D9a4058d7F6981
         </div>
     </div>
     <div class="table-responsive">
@@ -87,7 +87,7 @@
                         <button class="btn btn-primary apply-btn" type="submit">보상 신청</button>
                     </form>
                     <span th:if="${userInsurance?.compensationStatus?.name() != 'NOT_SUBMITTED'}">신청 완료</span>
-                    <span th:if="${userInsurance?.status?.name() != 'WAITING_JOIN'}">보상 미신청</span>
+                    <span th:if="${userInsurance?.status?.name() == 'WAITING_JOIN'}">보상 미신청</span>
                 </td>
                 <td>
                             <span th:if="${userInsurance?.status?.name() != 'WAITING_JOIN'}">

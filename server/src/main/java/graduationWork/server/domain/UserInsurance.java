@@ -58,6 +58,8 @@ public class UserInsurance {
 
     private String compensationAmount;
 
+    private String compensationAmountEther;
+
     @OneToMany(mappedBy = "userInsurance")
     private List<UploadFile> files;
 

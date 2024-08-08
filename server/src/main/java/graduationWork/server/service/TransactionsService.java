@@ -1,6 +1,7 @@
 package graduationWork.server.service;
 
 import graduationWork.server.domain.Transactions;
+import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.dto.EtherPayReceipt;
 import graduationWork.server.ether.EtherscanApiClient;
 import graduationWork.server.ether.UpbitApiClient;
@@ -35,8 +36,9 @@ public class TransactionsService {
     @Transactional
     public Long save(String name, Long userInsuranceId, Long userId, String fromAddress, String toAddress, String transactionAmount,EtherPayReceipt etherPayReceipt) {
         Transactions transactions = new Transactions();
+        UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
         transactions.setName(name);
-        transactions.setUserInsurance(userInsuranceRepository.findById(userInsuranceId));
+        transactions.setUserInsurance(userInsurance);
         transactions.setFromAddress(fromAddress);
         transactions.setToAddress(toAddress);
         transactions.setTimestamp(etherPayReceipt.getTimestamp());
@@ -57,6 +59,10 @@ public class TransactionsService {
 
     public List<Transactions> findByFromAndValue(String from, String value) {
         return transactionsRepository.findByFromAndValue(from, value);
+    }
+
+    public List<Transactions> findByFromToValue(String from, String to, String value) {
+        return transactionsRepository.findByFromToValue(from, to, value);
     }
 
     public List<EtherPayReceipt> getPayReceipts(String address, String fromAddress) {

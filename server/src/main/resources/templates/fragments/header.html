@@ -100,19 +100,14 @@
     }
     .detail-label {
       font-weight: bold;
-      width: 130px; /* Adjust width for more spacing */
+      width: 170px; /* Adjust width for more spacing */
       display: inline-block;
     }
     .detail-value {
       display: inline-block;
       word-wrap: break-word;
-      max-width: calc(100% - 140px); /* Adjust for the new label width */
-    }
-    .transaction-total {
-      font-weight: bold;
-      font-size: 1.1em;
-      margin-top: 20px;
-      text-align: right;
+      word-break: break-all; /* Ensures long words break correctly */
+      max-width: calc(100% - 180px); /* Adjust for the new label width */
     }
   </style>
   <title>졸업 작품</title>

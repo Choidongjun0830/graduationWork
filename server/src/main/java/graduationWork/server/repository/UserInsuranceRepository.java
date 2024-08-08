@@ -3,6 +3,7 @@ package graduationWork.server.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import graduationWork.server.domain.QUserInsurance;
 import graduationWork.server.domain.User;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -63,7 +65,7 @@ public class UserInsuranceRepository {
                 .getResultList();
     }
 
-    public List<UserInsurance> findAllUserInsurances(String usernameCond, String insuranceNameCond, CompensationStatus statusCond, CompensationOption optionCond) {
+    public List<UserInsurance> findAllUserInsurances(String usernameCond, String insuranceNameCond, CompensationStatus statusCond, CompensationOption optionCond, Pageable pageable) {
         JPAQueryFactory queryFactory = new JPAQueryFactory(em);
 
         List<UserInsurance> result = queryFactory
@@ -76,9 +78,27 @@ public class UserInsuranceRepository {
                         compensationOptionEq(optionCond),
                         compensationStatusEq(statusCond)
                 )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .orderBy(userInsurance.registerDate.desc(), userInsurance.id.asc())
                 .fetch();
 
         return result;
+    }
+
+    public long countUserInsurances(String usernameCond, String insuranceNameCond, CompensationStatus statusCond, CompensationOption optionCond) {
+        JPAQueryFactory queryFactory = new JPAQueryFactory(em);
+
+        return queryFactory
+                .select(userInsurance.count())
+                .from(userInsurance)
+                .where(
+                        usernameEq(usernameCond),
+                        insuranceNameEq(insuranceNameCond),
+                        compensationOptionEq(optionCond),
+                        compensationStatusEq(statusCond)
+                )
+                .fetchOne();
     }
 
     private BooleanExpression usernameEq(String usernameCond) {

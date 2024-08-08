@@ -5,6 +5,7 @@ import graduationWork.server.domain.UploadFile;
 import graduationWork.server.domain.User;
 import graduationWork.server.domain.UserInsurance;
 import graduationWork.server.dto.InsuranceSearch;
+import graduationWork.server.dto.UserInsuranceSearchDto;
 import graduationWork.server.email.service.EmailService;
 import graduationWork.server.file.FileStore;
 import graduationWork.server.service.FileService;
@@ -16,6 +17,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,19 +50,30 @@ public class adminController {
 
     //보험 보상 신청 리스트
     @GetMapping("/insurance/admin/compensation/requests")
-    public String compensationRequests(@ModelAttribute InsuranceSearch insuranceSearch, HttpSession session, Model model) throws AccessDeniedException {
-        checkRole(session);
+    public String compensationRequests(@RequestParam(required = false, defaultValue = "0", value = "page") int pageNo,
+                                       @ModelAttribute InsuranceSearch insuranceSearch, HttpSession session, Model model) throws AccessDeniedException {
+        if (!checkRole(session)) {
+            return "error/403";
+        }
 
-        List<UserInsurance> userInsurances = userInsuranceService.findAllUserInsurances(insuranceSearch);
+        UserInsuranceSearchDto results = userInsuranceService.findAllUserInsurances(insuranceSearch, pageNo);
+        List<UserInsurance> userInsurances = results.getContent();
+        long count = results.getCount();
+        int totalPages = (int) Math.ceil((double) count / (double) 5);
 
         model.addAttribute("userInsurances", userInsurances);
-
+        model.addAttribute("count", count);
+        model.addAttribute("pageNo", pageNo);
+        model.addAttribute("totalPages", totalPages);
         return "admin/userInsuranceListForAdmin";
     }
 
     @GetMapping("/insurance/admin/join/manage")
-    public String joinManage(@RequestParam Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
-        checkRole(session);
+    public String joinManage(@RequestParam Long userInsuranceId, Model model,
+                             HttpSession session) throws AccessDeniedException {
+        if (!checkRole(session)) {
+            return "error/403";
+        }
 
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
         model.addAttribute("userInsurance", userInsurance);
@@ -67,7 +82,9 @@ public class adminController {
 
     @GetMapping("/insurance/admin/compensation/manage")
     public String compensationManage(@RequestParam Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
-        checkRole(session);
+        if (!checkRole(session)) {
+            return "error/403";
+        }
 
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
         model.addAttribute("userInsurance", userInsurance);
@@ -76,7 +93,9 @@ public class adminController {
 
     @PostMapping("/insurance/admin/sendJoinMail")
     public String sendJoinMail(@RequestParam("userInsuranceId") Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
-        checkRole(session);
+        if (!checkRole(session)) {
+            return "error/403";
+        }
 
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
         userInsuranceService.setCompensationAmount(userInsuranceId);
@@ -92,7 +111,9 @@ public class adminController {
 
     @PostMapping("/insurance/admin/sendCompensationMail")
     public String sendCompensationMail(@RequestParam("userInsuranceId") Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
-        checkRole(session);
+        if (!checkRole(session)) {
+            return "error/403";
+        }
 
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
 
@@ -125,11 +146,8 @@ public class adminController {
                 .body(resource);
     }
 
-    public static void checkRole(HttpSession session) throws AccessDeniedException {
+    public boolean checkRole(HttpSession session) throws AccessDeniedException {
         User loginUser = (User) session.getAttribute("loginUser");
-        if (!"ROLE_ADMIN".equals(loginUser.getRole())) {
-            // 예외 처리
-            throw new AccessDeniedException("Access Denied: You do not have permission to access this page.");
-        }
+        return loginUser != null && loginUser.getRole().equals("ROLE_ADMIN");
     }
 }

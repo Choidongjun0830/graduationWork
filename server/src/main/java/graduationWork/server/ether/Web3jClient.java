@@ -50,9 +50,12 @@ public class Web3jClient {
             BigDecimal gasPriceGwei = Convert.fromWei(new BigDecimal(gasPriceWei), Convert.Unit.GWEI);
             System.out.println("Current Gas Price: " + gasPriceGwei + " Gwei");
 
-            // 우선 순위 높은 가스 가격 설정 (20% 증가)
-            BigInteger highPriorityGasPrice = gasPriceWei.multiply(BigInteger.valueOf(140)).divide(BigInteger.valueOf(100));
-            System.out.println("High Priority Gas Price: " + highPriorityGasPrice);
+            BigDecimal highPriorityGasPriceGwei = gasPriceGwei.add(BigDecimal.valueOf(20));
+            System.out.println("High Priority Gas Price: " + highPriorityGasPriceGwei + " Gwei");
+
+            // 고우선순위 가스 가격을 Wei 단위로 변환
+            BigInteger highPriorityGasPriceWei = Convert.toWei(highPriorityGasPriceGwei, Convert.Unit.GWEI).toBigIntegerExact();
+            System.out.println("High Priority Gas Price: " + highPriorityGasPriceWei + " Wei");
 
             // 전송할 이더리움 양 설정
             BigInteger amountInWei = new BigInteger(weiAmount);
@@ -91,7 +94,7 @@ public class Web3jClient {
             // Nonce 설정
             BigInteger nonce = web3j.ethGetTransactionCount(credentials.getAddress(), DefaultBlockParameterName.PENDING).send().getTransactionCount();
 
-            BigInteger replacementGasPrice = highPriorityGasPrice.multiply(BigInteger.valueOf(150)).divide(BigInteger.valueOf(100)); // 기존 가격의 25% 증가
+            BigInteger replacementGasPrice = highPriorityGasPriceWei.multiply(BigInteger.valueOf(150)).divide(BigInteger.valueOf(100)); // 기존 가격의 25% 증가
             System.out.println("Replacement Gas Price: " + replacementGasPrice);
 
             // 트랜잭션 생성

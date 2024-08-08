@@ -48,4 +48,12 @@ public class TransactionsRepository {
                 .setParameter("value", value)
                 .getResultList();
     }
+
+    public List<Transactions> findByFromToValue(String fromAddress, String toAddress, String value) {
+        return em.createQuery("select t from Transactions t where t.fromAddress = :fromAddress and t.toAddress = :toAddress and t.value = :value", Transactions.class)
+                .setParameter("fromAddress", fromAddress)
+                .setParameter("toAddress", toAddress)
+                .setParameter("value", value)
+                .getResultList();
+    }
 }

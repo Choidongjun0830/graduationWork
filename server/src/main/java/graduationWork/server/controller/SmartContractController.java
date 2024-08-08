@@ -39,15 +39,28 @@ public class SmartContractController {
     private String contractAddress;
 
     //유저가 보험 가입료 입금한 영수증 내역 보여주기
-    @GetMapping("/user/insurances/deposit/receipt/{userInsuranceId}")
-    public String showPayPremium(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser,
+    @GetMapping("/user/insurances/{userInsuranceId}/deposit/receipt")
+    public String showPayPremium(@SessionAttribute(name = SessionConst.LOGIN_USER, required = true) User loginUser,
                                 @PathVariable Long userInsuranceId, Model model) {
 
         String userWalletAddress = loginUser.getWalletAddress();
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
         List<Transactions> userTransactions = transactionsService.findByFromAndValue(userWalletAddress, userInsurance.getEtherRegisterPrice());
+        Transactions transaction = userTransactions.get(0);
+        model.addAttribute("transaction", transaction);
+        return "ether/depositReceipt";
+    }
 
-        model.addAttribute("userTransactions", userTransactions);
+    //유저가 받은 보험 보상 영수증 내역 보여주기
+    @GetMapping("/user/insurances/{userInsuranceId}/compensation/receipt")
+    public String showCompensationReceipt(@SessionAttribute(name = SessionConst.LOGIN_USER, required = true) User loginUser,
+                                 @PathVariable Long userInsuranceId, Model model) {
+
+        String userWalletAddress = loginUser.getWalletAddress();
+        UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
+        List<Transactions> userTransactions = transactionsService.findByFromToValue(contractAddress, userWalletAddress, userInsurance.getCompensationAmountEther());
+        Transactions transaction = userTransactions.get(0);
+        model.addAttribute("transaction", transaction);
         return "ether/depositReceipt";
     }
 

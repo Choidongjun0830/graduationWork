@@ -233,12 +233,9 @@ public class InsuranceController {
 
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
         CompensationOption option = userInsurance.getCompensationOption();
+        String compensationAmountEther = userInsurance.getCompensationAmountEther();
         String compensationAmount = userInsurance.getCompensationAmount();
-        double doubleCompensationAmount = Double.parseDouble(compensationAmount.replace("만원", "0000"));
-        System.out.println("doubleCompensationAmount = " + doubleCompensationAmount);
-        double tradePrice = upbitApiClient.getTradePrice();
-        String compensationAmountInEther = String.valueOf(doubleCompensationAmount / tradePrice);
-        BigInteger compensationAmountInWei = Convert.toWei(compensationAmountInEther, Convert.Unit.ETHER).toBigInteger();
+        BigInteger compensationAmountInWei = Convert.toWei(compensationAmountEther, Convert.Unit.ETHER).toBigInteger();
 
         User user = userInsurance.getUser();
 
@@ -257,11 +254,12 @@ public class InsuranceController {
             etherPayReceipt.setFrom(contractAddress);
             etherPayReceipt.setTo(userWalletAddress);
             etherPayReceipt.setHash(hash);
-            etherPayReceipt.setValue(compensationAmountInEther);
+            etherPayReceipt.setValue(compensationAmountEther);
             etherPayReceipt.setKrwValue(compensationAmount);
+
             model.addAttribute("etherPayReceipt", etherPayReceipt);
             //DB에 트랜잭션 저장까지
-            transactionsService.save(name, userInsuranceId, user.getId(), contractAddress, userWalletAddress, amount, etherPayReceipt);
+            transactionsService.save(name, userInsuranceId, user.getId(), contractAddress, userWalletAddress, compensationAmountEther, etherPayReceipt);
 
             return "insurance/flightAutoCompensationConfirm";
         }

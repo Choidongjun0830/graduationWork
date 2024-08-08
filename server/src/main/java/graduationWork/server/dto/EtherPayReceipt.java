@@ -19,4 +19,22 @@ public class EtherPayReceipt {
 
     private String krwValue;
 
+    private String compensationAmount;
+
+    private String compensationAmountEther;
+
+    @Override
+    public String toString() {
+        return "EtherPayReceipt{" +
+                "name='" + name + '\'' +
+                ", timestamp=" + timestamp +
+                ", hash='" + hash + '\'' +
+                ", from='" + from + '\'' +
+                ", to='" + to + '\'' +
+                ", value='" + value + '\'' +
+                ", krwValue='" + krwValue + '\'' +
+                ", compensationAmount='" + compensationAmount + '\'' +
+                ", compensationAmountEther='" + compensationAmountEther + '\'' +
+                '}';
+    }
 }

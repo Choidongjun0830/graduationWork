@@ -20,6 +20,7 @@ public class InitUsers {
     public void init() {
         initUserService.dbInit1();
         initUserService.dbInit2();
+        initUserService.dbInit3();
     }
 
     @Component
@@ -51,6 +52,18 @@ public class InitUsers {
             user.setEmail("adong0808@naver.com");
             user.setJoinDate(LocalDate.now());
             user.setWalletAddress("0xED0313FdC8A0cd7c36f5beE689455c6b95742Ed8");
+            em.persist(user);
+        }
+
+        public void dbInit3() {
+            User user = new User();
+            user.setUsername("이재우");
+            user.setLoginId("jwlee2357");
+            user.setPassword(passwordEncoder.encode("jwlee2357","1111"));
+            user.setRole("ROLE_USER");
+            user.setEmail("rink2357@soongsil.ac.kr");
+            user.setJoinDate(LocalDate.now());
+            user.setWalletAddress("0x2F420eE5487923Da799D057Ee3BbFc631ba86cd7");
             em.persist(user);
         }
     }

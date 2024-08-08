@@ -18,6 +18,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -153,7 +156,14 @@ public class UserInsuranceService {
         UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
         String reason = userInsurance.getReason();
         Map<String, String> details = insuranceRepository.findDetails(userInsurance.getInsurance().getId());
-        userInsurance.setCompensationAmount(details.get(reason));
+        String compensationAmount = details.get(reason);
+        userInsurance.setCompensationAmount(compensationAmount);
+
+        double doubleCompensationAmount = Double.parseDouble(compensationAmount.replace("만원", "0000"));
+
+        double tradePrice = upbitApiClient.getTradePrice();
+        String compensationAmountEther = String.valueOf(doubleCompensationAmount / tradePrice);
+        userInsurance.setCompensationAmountEther(compensationAmountEther);
     }
 
     public UserInsurance findOne(Long id) {
@@ -173,16 +183,19 @@ public class UserInsuranceService {
         return userInsuranceRepository.findAllPendingUserInsurances();
     }
 
-    public List<UserInsurance> findAllUserInsurances(InsuranceSearch insuranceSearch) {
+    public UserInsuranceSearchDto findAllUserInsurances(InsuranceSearch insuranceSearch, int pageNo) {
+        Pageable pageable = PageRequest.of(pageNo, 5);
 
         CompensationStatus compensationStatus = insuranceSearch.getCompensationStatus();
-
         String insuranceName = insuranceSearch.getInsuranceName();
-
         String username = insuranceSearch.getUsername();
-
         CompensationOption option = insuranceSearch.getCompensationOption();
 
-        return userInsuranceRepository.findAllUserInsurances(username, insuranceName, compensationStatus, option);
+        List<UserInsurance> contents = userInsuranceRepository.findAllUserInsurances(username, insuranceName, compensationStatus, option, pageable);
+        long count = userInsuranceRepository.countUserInsurances(username, insuranceName, compensationStatus, option);
+        UserInsuranceSearchDto userInsuranceSearchDto = new UserInsuranceSearchDto();
+        userInsuranceSearchDto.setContent(contents);
+        userInsuranceSearchDto.setCount(count);
+        return userInsuranceSearchDto;
     }
 }

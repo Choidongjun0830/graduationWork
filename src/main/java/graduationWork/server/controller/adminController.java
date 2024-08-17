@@ -98,7 +98,6 @@ public class adminController {
         }
 
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
-        userInsuranceService.setCompensationAmount(userInsuranceId);
 
         String sub = "보험 가입 완료";
         emailService.sendJoinEmail(userInsuranceId, sub);
@@ -106,7 +105,7 @@ public class adminController {
         model.addAttribute("message", "이메일이 성공적으로 전송되었습니다.");
         model.addAttribute("userInsurance", userInsurance);
 
-        return "admin/JoinEmailSuccess";
+        return "admin/joinEmailSuccess";
     }
 
     @PostMapping("/insurance/admin/sendCompensationMail")

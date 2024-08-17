@@ -15,7 +15,7 @@ import java.util.List;
 public class UserInsurance {
 
     @Id @GeneratedValue
-    @Column(name = "usesInsurance_id")
+    @Column(name = "userInsurance_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)

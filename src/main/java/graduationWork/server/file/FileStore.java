@@ -26,6 +26,8 @@ public class FileStore {
 
     public List<UploadFile> storeFiles(List<MultipartFile> multipartFiles) throws IOException {
 
+        log.info("Current directory: " + System.getProperty("user.dir"));
+
         List<UploadFile> storeFileResult = new ArrayList<>();
         for (MultipartFile multipartFile : multipartFiles) {
             log.info("Storing file: " + multipartFile.getOriginalFilename());

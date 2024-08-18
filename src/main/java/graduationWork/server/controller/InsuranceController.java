@@ -52,7 +52,7 @@ public class InsuranceController {
     public String join(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser, Model model) {
 
         if (loginUser.getWalletAddress() == null || loginUser.getWalletAddress().isEmpty()) {
-            model.addAttribute("msg", "가상 화폐 주소를 등록해야 보상 신청이 가능합니다.");
+            model.addAttribute("msg", "가상 화폐 주소를 등록해야 보험 가입이 가능합니다.");
             model.addAttribute("url", "/");
             return "alert";
         }

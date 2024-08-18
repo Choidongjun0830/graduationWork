@@ -269,6 +269,7 @@ public class InsuranceController {
         }
         else if (option == CompensationOption.OPTION_EMAIL) {
             model.addAttribute("userInsurance", userInsuranceService.findOne(userInsuranceId));
+            emailService.sendCompensatingApplyEmail(userInsuranceId, "상담 후 보상 진행 신청 완료");
             return "insurance/emailCompensationConfirm";
         }
         else{
@@ -300,6 +301,8 @@ public class InsuranceController {
 
     @GetMapping("insurance/compensation/apply/upload/confirm")
     public String uploadConfirm(@RequestParam Long userInsuranceId, Model model) {
+        emailService.sendCompensatingApplyEmail(userInsuranceId, "상담 후 보상 진행 신청 완료");
+        
         model.addAttribute("userInsurance", userInsuranceService.findOne(userInsuranceId));
         return "insurance/emailCompensationConfirm";
     }

@@ -72,7 +72,29 @@ public class EmailService {
     }
 
     @Transactional
-    public void sendCompensatingEmail(Long userInsuranceId, String subject) {
+    public void sendCompensatingApplyEmail(Long userInsuranceId, String subject) {
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
+        String to = userInsurance.getUser().getEmail();
+
+        try{
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            mimeMessageHelper.setFrom(sender);
+            mimeMessageHelper.setTo(to);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(buildCompensatingApplyEmailContent(userInsurance), true);
+
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public void sendAdminCompensatingEmail(Long userInsuranceId, String subject) {
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
 
@@ -86,7 +108,7 @@ public class EmailService {
             mimeMessageHelper.setFrom(sender);
             mimeMessageHelper.setTo(to);
             mimeMessageHelper.setSubject(subject);
-            mimeMessageHelper.setText(buildCompensatingEmailContent(userInsurance), true);
+            mimeMessageHelper.setText(buildAdminCompensatingEmailContent(userInsurance), true);
 
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
@@ -125,7 +147,7 @@ public class EmailService {
                 .append("<div style=\"border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 20px;\">")
                 .append("<h2 style=\"text-align: center; color: #007bff;\">보험 가입 신청 완료</h2>")
                 .append("<h3 style=\"text-align: center; color: #007bff;\">아래 주소로 보험료를 입금해주세요.</h3>")
-                .append("<h3 style=\"text-align: center; color: #007bff;\">주소 0000000</h3>")
+                .append("<h3 style=\"text-align: center; color: #007bff;\">0xE564Bd624b37C8a91E40C0fBb9D9a4058d7F6981</h3>")
                 .append("<div style=\"border-top: 1px solid #ddd; padding-top: 10px;\">")
                 .append("<p><strong>보험명:</strong> ").append(userInsurance.getInsurance().getName()).append("</p>")
                 .append("<p><strong>회원명:</strong> ").append(userInsurance.getUser().getUsername()).append("</p>")
@@ -163,8 +185,31 @@ public class EmailService {
         return content.toString();
     }
 
+    //상담 후 보상
+    private String buildCompensatingApplyEmailContent(UserInsurance userInsurance) {
+        StringBuilder content = new StringBuilder();
+
+        String reason = userInsurance.getReason();
+
+        content.append("<div style=\"max-width: 600px; margin: auto; padding: 20px; font-family: Arial, sans-serif;\">")
+                .append("<div style=\"border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 20px;\">")
+                .append("<h2 style=\"text-align: center; color: #007bff;\">상담 후 보상 진행 신청 완료</h2>")
+                .append("<div style=\"border-top: 1px solid #ddd; padding-top: 10px;\">")
+                .append("<p><strong>보험명:</strong> ").append(userInsurance.getInsurance().getName()).append("</p>")
+                .append("<p><strong>회원명:</strong> ").append(userInsurance.getUser().getUsername()).append("</p>")
+                .append("<p><strong>신청일:</strong> ").append(userInsurance.getApplyDate()).append("</p>")
+                .append("<p><strong>신청 사유:</strong> ").append(userInsurance.getReason()).append("</p>")
+                .append("<p><strong>발생일:</strong> ").append(userInsurance.getOccurrenceDate()).append("</p>")
+                .append("<p><strong>보상 금액(원):</strong> ").append(userInsurance.getCompensationAmount()).append("</p>")
+                .append("<p><strong>보상 금액(이더리움):</strong> ").append(userInsurance.getCompensationAmountEther()).append("</p>")
+                .append("</div>")
+                .append("</div>")
+                .append("</div>");
+        return content.toString();
+    }
+
     //보상 진행 완료 시에 메일 보내기. 상담 보상 진행 옵션일 때 관리자가 보내는 보상 진행중 메일.
-    private String buildCompensatingEmailContent(UserInsurance userInsurance) {
+    private String buildAdminCompensatingEmailContent(UserInsurance userInsurance) {
         StringBuilder content = new StringBuilder();
 
         String reason = userInsurance.getReason();

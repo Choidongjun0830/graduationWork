@@ -108,7 +108,7 @@ public class adminController {
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
 
         String sub = "보험 보상 진행을 위한 메일 전송";
-        emailService.sendCompensatingEmail(userInsuranceId, sub);
+        emailService.sendAdminCompensatingEmail(userInsuranceId, sub);
 
         model.addAttribute("message", "이메일이 성공적으로 전송되었습니다.");
         model.addAttribute("userInsurance", userInsurance);

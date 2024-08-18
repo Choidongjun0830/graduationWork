@@ -72,12 +72,34 @@ public class EmailService {
     }
 
     @Transactional
-    public void sendCompensationEmail(Long userInsuranceId, String subject) {
+    public void sendCompensatingEmail(Long userInsuranceId, String subject) {
 
         MimeMessage mimeMessage = mailSender.createMimeMessage();
 
         UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
         userInsurance.setCompensationStatus(CompensationStatus.COMPENSATED);
+        String to = userInsurance.getUser().getEmail();
+
+        try{
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+
+            mimeMessageHelper.setFrom(sender);
+            mimeMessageHelper.setTo(to);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(buildCompensatingEmailContent(userInsurance), true);
+
+            mailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Transactional
+    public void sendCompensationEmail(Long userInsuranceId, String subject) {
+
+        MimeMessage mimeMessage = mailSender.createMimeMessage();
+
+        UserInsurance userInsurance = userInsuranceRepository.findById(userInsuranceId);
         String to = userInsurance.getUser().getEmail();
 
         try{
@@ -141,8 +163,8 @@ public class EmailService {
         return content.toString();
     }
 
-    //보상 진행 완료 시에 메일 보내기
-    private String buildCompensationEmailContent(UserInsurance userInsurance) {
+    //보상 진행 완료 시에 메일 보내기. 상담 보상 진행 옵션일 때 관리자가 보내는 보상 진행중 메일.
+    private String buildCompensatingEmailContent(UserInsurance userInsurance) {
         StringBuilder content = new StringBuilder();
 
         String reason = userInsurance.getReason();
@@ -156,7 +178,31 @@ public class EmailService {
                 .append("<p><strong>신청일:</strong> ").append(userInsurance.getApplyDate()).append("</p>")
                 .append("<p><strong>신청 사유:</strong> ").append(userInsurance.getReason()).append("</p>")
                 .append("<p><strong>발생일:</strong> ").append(userInsurance.getOccurrenceDate()).append("</p>")
-                .append("<p><strong>보상 금액:</strong> ").append(userInsurance.getCompensationAmount()).append("</p>")
+                .append("<p><strong>보상 금액(원):</strong> ").append(userInsurance.getCompensationAmount()).append("</p>")
+                .append("<p><strong>보상 금액(이더리움):</strong> ").append(userInsurance.getCompensationAmountEther()).append("</p>")
+                .append("</div>")
+                .append("</div>")
+                .append("</div>");
+        return content.toString();
+    }
+
+    //자동 보상 진행 시에 보상 완료 메일
+    private String buildCompensationEmailContent(UserInsurance userInsurance) {
+        StringBuilder content = new StringBuilder();
+
+        String reason = userInsurance.getReason();
+
+        content.append("<div style=\"max-width: 600px; margin: auto; padding: 20px; font-family: Arial, sans-serif;\">")
+                .append("<div style=\"border: 1px solid #ddd; border-radius: 10px; box-shadow: 0 0 10px rgba(0,0,0,0.1); padding: 20px;\">")
+                .append("<h2 style=\"text-align: center; color: #007bff;\">보험 보상 완료</h2>")
+                .append("<div style=\"border-top: 1px solid #ddd; padding-top: 10px;\">")
+                .append("<p><strong>보험명:</strong> ").append(userInsurance.getInsurance().getName()).append("</p>")
+                .append("<p><strong>회원명:</strong> ").append(userInsurance.getUser().getUsername()).append("</p>")
+                .append("<p><strong>신청일:</strong> ").append(userInsurance.getApplyDate()).append("</p>")
+                .append("<p><strong>신청 사유:</strong> ").append(userInsurance.getReason()).append("</p>")
+                .append("<p><strong>발생일:</strong> ").append(userInsurance.getOccurrenceDate()).append("</p>")
+                .append("<p><strong>보상 금액(원):</strong> ").append(userInsurance.getCompensationAmount()).append("</p>")
+                .append("<p><strong>보상 금액(이더리움):</strong> ").append(userInsurance.getCompensationAmountEther()).append("</p>")
                 .append("</div>")
                 .append("</div>")
                 .append("</div>");

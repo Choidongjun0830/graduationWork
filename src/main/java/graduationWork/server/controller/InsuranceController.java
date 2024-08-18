@@ -2,6 +2,7 @@ package graduationWork.server.controller;
 
 import graduationWork.server.domain.*;
 import graduationWork.server.dto.*;
+import graduationWork.server.email.service.EmailService;
 import graduationWork.server.enumurate.CompensationOption;
 import graduationWork.server.enumurate.FlightStatus;
 import graduationWork.server.enumurate.InsuranceType;
@@ -42,6 +43,7 @@ public class InsuranceController {
     private final Web3jClient web3jClient;
     private final TransactionsService transactionsService;
     private final UpbitApiClient upbitApiClient;
+    private final EmailService emailService;
 
     @Value("${etherscan.contract.address}")
     private String contractAddress;
@@ -260,6 +262,8 @@ public class InsuranceController {
             model.addAttribute("etherPayReceipt", etherPayReceipt);
             //DB에 트랜잭션 저장까지
             transactionsService.save(name, userInsuranceId, user.getId(), contractAddress, userWalletAddress, compensationAmountEther, etherPayReceipt);
+            //보상 완료 이메일 전송
+            emailService.sendCompensationEmail(userInsuranceId, "보험 보상 완료");
 
             return "insurance/flightAutoCompensationConfirm";
         }

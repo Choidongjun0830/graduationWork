@@ -81,6 +81,8 @@ public class UserInsuranceService {
 
         Long userInsuranceId = userInsuranceRepository.save(userInsurance);
 
+        emailService.sendAddressEmail(userInsuranceId, "보험 가입 신청 완료");
+
         return userInsuranceId;
     }
 

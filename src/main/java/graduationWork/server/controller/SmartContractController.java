@@ -61,22 +61,6 @@ public class SmartContractController {
         List<Transactions> userTransactions = transactionsService.findByFromToValue(contractAddress, userWalletAddress, userInsurance.getCompensationAmountEther());
         Transactions transaction = userTransactions.get(0);
         model.addAttribute("transaction", transaction);
-        return "ether/depositReceipt";
+        return "ether/compensationReceipt";
     }
-
-//    @GetMapping("/sendCompensation")
-//    public String compensate()  {
-//
-//        try {
-//            BigDecimal etherAmount = new BigDecimal("0.001");
-//            BigInteger weiAmount = Convert.toWei(etherAmount, Convert.Unit.ETHER).toBigInteger();
-//            TransactionReceipt receipt = web3jClient.sendCompensation("0xED0313FdC8A0cd7c36f5beE689455c6b95742Ed8", String.valueOf(weiAmount));
-//            System.out.println("receipt = " + receipt);
-//            return "redirect:/user/insurances/deposit/receipt";
-//        } catch (Exception e) {
-//            System.err.println("Failed to send compensation: " + e.getMessage());
-//            e.printStackTrace();
-//        }
-//        return "redirect:/";
-//    }
 }

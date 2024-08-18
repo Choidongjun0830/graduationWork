@@ -11,30 +11,21 @@ import graduationWork.server.file.FileStore;
 import graduationWork.server.service.FileService;
 import graduationWork.server.service.UserInsuranceService;
 import graduationWork.server.service.UserService;
-import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriUtils;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.AccessDeniedException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -109,7 +100,7 @@ public class adminController {
     }
 
     @PostMapping("/insurance/admin/sendCompensationMail")
-    public String sendCompensationMail(@RequestParam("userInsuranceId") Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
+    public String sendCompensatingMail(@RequestParam("userInsuranceId") Long userInsuranceId, Model model, HttpSession session) throws AccessDeniedException {
         if (!checkRole(session)) {
             return "error/403";
         }
@@ -117,7 +108,7 @@ public class adminController {
         UserInsurance userInsurance = userInsuranceService.findOne(userInsuranceId);
 
         String sub = "보험 보상 진행을 위한 메일 전송";
-        emailService.sendCompensationEmail(userInsuranceId, sub);
+        emailService.sendCompensatingEmail(userInsuranceId, sub);
 
         model.addAttribute("message", "이메일이 성공적으로 전송되었습니다.");
         model.addAttribute("userInsurance", userInsurance);

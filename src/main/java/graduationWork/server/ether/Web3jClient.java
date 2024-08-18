@@ -1,6 +1,8 @@
 package graduationWork.server.ether;
 
 import graduationWork.server.dto.CompensationDto;
+import graduationWork.server.email.service.EmailService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -30,6 +32,7 @@ import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class Web3jClient {
 
     @Value("${metamask.private.key}")

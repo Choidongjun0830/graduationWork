@@ -140,7 +140,7 @@ public class InsuranceController {
 
         User loginUser = (User) session.getAttribute("loginUser");
 
-        if (loginUser.getWalletAddress() == null) {
+        if (loginUser.getWalletAddress() == null || loginUser.getWalletAddress().isEmpty()) {
             model.addAttribute("msg", "가상 화폐 주소를 등록해야 보상 신청이 가능합니다.");
             model.addAttribute("url", "/user/info");
             return "alert";

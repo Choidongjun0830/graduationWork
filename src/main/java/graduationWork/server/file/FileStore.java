@@ -18,7 +18,7 @@ import java.util.UUID;
 @Slf4j
 public class FileStore {
 
-    private String fileDir = "C:/Users/adong/graduationWork/files/";
+    private String fileDir = "files/";
 
     public String getFullPath(String fileName) {
         return fileDir + fileName;

@@ -2,6 +2,8 @@ package graduationWork.server.file;
 
 import graduationWork.server.domain.UploadFile;
 import graduationWork.server.service.FileService;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.ServletContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +18,20 @@ import java.util.UUID;
 
 @Component
 @Slf4j
+@RequiredArgsConstructor
 public class FileStore {
 
-    private String fileDir = "files/";
+    private final ServletContext servletContext;
+
+    private String fileDir;
+
+    @PostConstruct
+    public void init() {
+        // ServletContext를 사용하여 애플리케이션의 실제 루트 경로 가져오기
+        String realPath = servletContext.getRealPath("/");
+        this.fileDir = realPath + "files/";
+        log.info("File directory set to: " + fileDir);
+    }
 
     public String getFullPath(String fileName) {
         return fileDir + fileName;

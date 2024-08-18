@@ -49,12 +49,14 @@ public class InsuranceController {
     private String contractAddress;
 
     @GetMapping("/insurance/new")
-    public String join(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser) {
+    public String join(@SessionAttribute(name = SessionConst.LOGIN_USER, required = false) User loginUser, Model model) {
 
-        if(loginUser.getWalletAddress() == null) {
-            //알림 띄우기 가상화폐 계좌를 입력해주세요.
-            return "redirect:/user/info";
+        if (loginUser.getWalletAddress() == null || loginUser.getWalletAddress().isEmpty()) {
+            model.addAttribute("msg", "가상 화폐 주소를 등록해야 보상 신청이 가능합니다.");
+            model.addAttribute("url", "/user/info");
+            return "alert";
         }
+
         return "insurance/travelTypeSelectFrom";
     }
 

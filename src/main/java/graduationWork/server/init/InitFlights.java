@@ -34,8 +34,8 @@ public class InitFlights {
         public void initFlights() {
             Flight flight1 = new Flight();
             flight1.setDeparture("ICN");
-            flight1.setDestination("SFO");
-            flight1.setDepartureDate(LocalDateTime.of(2024, 7, 20, 10, 30));
+            flight1.setDestination("JFK");
+            flight1.setDepartureDate(LocalDateTime.of(2024, 10, 21, 12, 00));
             flight1.setFlightNum("KE081");
             flight1.setStatus(FlightStatus.DELAYED);
             em.persist(flight1);
@@ -43,57 +43,57 @@ public class InitFlights {
             Flight flight2 = new Flight();
             flight2.setDeparture("ICN");
             flight2.setDestination("LAX");
-            flight2.setDepartureDate(LocalDateTime.of(2024, 7, 21, 12, 00));
+            flight2.setDepartureDate(LocalDateTime.of(2024, 10, 22, 12, 00));
             flight2.setFlightNum("KE017");
-            flight2.setStatus(FlightStatus.SCHEDULED);
+            flight2.setStatus(FlightStatus.DELAYED);
             em.persist(flight2);
 
             Flight flight3 = new Flight();
             flight3.setDeparture("ICN");
-            flight3.setDestination("NRT");
-            flight3.setDepartureDate(LocalDateTime.of(2024, 7, 22, 14, 45));
-            flight3.setFlightNum("KE701");
-            flight3.setStatus(FlightStatus.SCHEDULED);
+            flight3.setDestination("YVR");
+            flight3.setDepartureDate(LocalDateTime.of(2024, 10, 23, 12, 00));
+            flight3.setFlightNum("KE071");
+            flight3.setStatus(FlightStatus.DELAYED);
             em.persist(flight3);
 
             Flight flight4 = new Flight();
             flight4.setDeparture("ICN");
-            flight4.setDestination("CDG");
-            flight4.setDepartureDate(LocalDateTime.of(2024, 7, 23, 16, 30));
-            flight4.setFlightNum("KE901");
-            flight4.setStatus(FlightStatus.SCHEDULED);
+            flight4.setDestination("NRT");
+            flight4.setDepartureDate(LocalDateTime.of(2024, 10, 24, 12, 00));
+            flight4.setFlightNum("KE701");
+            flight4.setStatus(FlightStatus.DELAYED);
             em.persist(flight4);
 
             Flight flight5 = new Flight();
             flight5.setDeparture("ICN");
-            flight5.setDestination("HAN");
-            flight5.setDepartureDate(LocalDateTime.of(2024, 7, 25, 12, 30));
-            flight5.setFlightNum("OZ765");
-            flight5.setStatus(FlightStatus.CANCELLED);
+            flight5.setDestination("CDG");
+            flight5.setDepartureDate(LocalDateTime.of(2024, 10, 25, 12, 00));
+            flight5.setFlightNum("KE901");
+            flight5.setStatus(FlightStatus.DELAYED);
             em.persist(flight5);
 
             Flight flight6 = new Flight();
             flight6.setDeparture("ICN");
-            flight6.setDestination("OKA");
-            flight6.setDepartureDate(LocalDateTime.of(2024, 8, 3, 10, 30));
-            flight6.setFlightNum("OZ172");
+            flight6.setDestination("HAN");
+            flight6.setDepartureDate(LocalDateTime.of(2024, 10, 26, 12, 00));
+            flight6.setFlightNum("OZ765");
             flight6.setStatus(FlightStatus.DELAYED);
             em.persist(flight6);
 
-
             Flight flight7 = new Flight();
             flight7.setDeparture("ICN");
-            flight7.setDestination("CJU");
-            flight7.setDepartureDate(LocalDateTime.of(2024, 7, 25, 15, 30));
-            flight7.setFlightNum("7C111");
+            flight7.setDestination("OKA");
+            flight7.setDepartureDate(LocalDateTime.of(2024, 10, 27, 12, 00));
+            flight7.setFlightNum("OZ172");
             flight7.setStatus(FlightStatus.DELAYED);
             em.persist(flight7);
 
+
             Flight flight8 = new Flight();
             flight8.setDeparture("ICN");
-            flight8.setDestination("SFO");
-            flight8.setDepartureDate(LocalDateTime.of(2024, 8, 20, 10, 30));
-            flight8.setFlightNum("KE081");
+            flight8.setDestination("CJU");
+            flight8.setDepartureDate(LocalDateTime.of(2024, 10, 28, 12, 00));
+            flight8.setFlightNum("7C111");
             flight8.setStatus(FlightStatus.DELAYED);
             em.persist(flight8);
 

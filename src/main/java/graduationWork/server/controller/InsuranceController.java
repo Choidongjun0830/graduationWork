@@ -9,10 +9,12 @@ import graduationWork.server.enumurate.InsuranceType;
 import graduationWork.server.ether.UpbitApiClient;
 import graduationWork.server.ether.Web3jClient;
 import graduationWork.server.file.FileStore;
+import graduationWork.server.flightApi.FlightClient;
 import graduationWork.server.service.*;
 import graduationWork.server.utils.DateTimeUtils;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
+import java.util.ArrayList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -185,9 +187,10 @@ public class InsuranceController {
                                     @Validated @ModelAttribute("form") CompensationApplyForm form,
                                     BindingResult bindingResult,
                                     Model model,
-                                    HttpSession session) {
+                                    HttpSession session) throws IOException {
 
         LocalDate occurrenceDate = form.getOccurrenceDate();
+        System.out.println("occurrenceDate = " + occurrenceDate);
         if (!isDateValid(occurrenceDate, userInsuranceId)) {
             bindingResult.rejectValue("occurrenceDate", "InvalidOccurrenceDate", "발생 일자가 가입 기간에 속하지 않습니다. 다시 입력해주세요.");
         }
@@ -203,6 +206,7 @@ public class InsuranceController {
         session.setAttribute("applyForm", form);
         userInsuranceService.applyFirstCompensationForm(userInsuranceId, loginUser.getId(), form);
         if (form.getReason().equals("항공기 및 수하물 지연 보상")) {
+//            flightService.setFlightFromOpenApi();
             return "redirect:/insurance/compensation/apply/flightDelay?userInsuranceId=" + userInsuranceId;
         }
         else {

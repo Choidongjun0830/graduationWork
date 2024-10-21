@@ -20,7 +20,7 @@
   <div class="py-5 text-center">
     <h2 th:text="#{insurance.claim.request}">보험 보상 신청</h2>
   </div>
-  <form action = "" th:action="@{/insurance/compensation/apply(userInsuranceId=${userInsurance.id})}" th:object="${form}" method="post" novalidate>
+  <form action = "applyForm" th:action="@{/insurance/compensation/apply(userInsuranceId=${userInsurance.id})}" th:object="${form}" method="post" novalidate>
     <input type="hidden" name="userInsuranceId" th:value="${userInsurance.id}" />
     <div class="mb-3">
       <label for="email" class="form-label">E-mail</label>
@@ -67,28 +67,66 @@
 
   // 언어에 따라 로케일 설정
   const localeMap = {
-      "ko": "ko",
-      "en": "default",
-      "fr": "fr",
-      "ja": "ja",
-      "zh": "zh"
+    "ko": "ko",
+    "en": "default",
+    "fr": "fr",
+    "ja": "ja",
+    "zh": "zh"
   };
 
   document.addEventListener('DOMContentLoaded', function() {
-      // 사용자 언어에 따른 로케일 설정
-      const localeSetting = localeMap[userLang] || "default";
+    // 사용자 언어에 따른 로케일 설정
+    const localeSetting = localeMap[userLang] || "default";
 
-      flatpickr("#occurrenceDate", {
-          enableTime: true,
-          position: "below",
-          dateFormat: "Y-m-d\\TH:i",
-          altInput: true,
-          altFormat: "Y-m-d H:i",
-          locale: {
-              ...flatpickr.l10ns[localeSetting], // 사용자 로케일 설정
-              firstDayOfWeek: 1 // 한 주의 시작일을 월요일로 설정
-          }
-      });
+    flatpickr("#occurrenceDate", {
+      enableTime: true,
+      position: "below",
+      dateFormat: "Y-m-d",
+      altInput: true,
+      altFormat: "Y-m-d",
+      locale: {
+        ...flatpickr.l10ns[localeSetting], // 사용자 로케일 설정
+        firstDayOfWeek: 1 // 한 주의 시작일을 월요일로 설정
+      }
+    });
+
+    const claimForm = document.getElementById('claimForm');
+    const occurrenceDateInput = document.getElementById("occurrenceDate");
+
+    function setErrorMessage(message) {
+      const errorField = document.createElement('div');
+      errorField.classList.add('field-error');
+      errorField.textContent = message;
+      occurrenceDateInput.insertAdjacentElement('afterend', errorField);
+    }
+
+    function clearErrorMessage() {
+      const errorField = occurrenceDateInput.nextElementSibling;
+      if (errorField && errorField.classList.contains('field-error')) {
+        errorField.remove();
+      }
+    }
+
+    claimForm.addEventListener('submit', function(event) {
+      const value = occurrenceDateInput.value;
+      let isValid = true;
+
+      // 검증 로직
+      if (!value) {
+        setErrorMessage("발생 일자는 필수 입력 사항입니다.");
+        isValid = false;
+      } else if (new Date(value) > new Date()) {
+        setErrorMessage("미래의 날짜는 선택할 수 없습니다.");
+        isValid = false;
+      } else {
+        clearErrorMessage();
+      }
+
+      // 검증에 실패한 경우 폼 제출을 막음
+      if (!isValid) {
+        event.preventDefault(); // 폼 제출 방지
+      }
+    });
   });
 </script>
 </body>

@@ -14,7 +14,7 @@ import java.time.LocalDate;
 @RequiredArgsConstructor
 public class InitUsers {
 
-    private final InitUserService initUserService;
+   private final InitUserService initUserService;
 
    @PostConstruct
    public void init() {

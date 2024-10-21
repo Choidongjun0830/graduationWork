@@ -31,7 +31,7 @@ public class PaymentChecker {
     private String contractAddress;
 
     @Transactional
-    @Scheduled(fixedRate = 15000) //15초마다 실행
+    @Scheduled(fixedRate = 15000) //1분마다 실행
     public void checkPayment() {
         checkUserPayments();
     }

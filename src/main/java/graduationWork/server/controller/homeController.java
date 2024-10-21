@@ -12,6 +12,7 @@ import graduationWork.server.service.FlightService;
 import graduationWork.server.service.UserInsuranceService;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -23,6 +24,7 @@ import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class homeController {
 
     private final FlightService flightService;
@@ -59,10 +61,10 @@ public class homeController {
                 return "userHome";
             }
         }
+        log.info("Received flight number: {}, departure date: {}", delayForm.getFlightNum(), delayForm.getDepartureDate());
 
         String flightNum = delayForm.getFlightNum();
         LocalDateTime departureDate = delayForm.getDepartureDate();
-
         Flight flight = flightService.getFlight(flightNum, departureDate);
 
         if(flight == null) {

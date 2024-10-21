@@ -16,13 +16,13 @@ public class InitInsurances {
 
     private final InitInsuranceService initInsuranceService;
 
-   @PostConstruct
-   public void init() {
-       initInsuranceService.domesticInit1();
-       initInsuranceService.domesticInit2();
-       initInsuranceService.overseaInit1();
-       initInsuranceService.overseaInit2();
-   }
+//    @PostConstruct
+//    public void init() {
+//        initInsuranceService.domesticInit1();
+//        initInsuranceService.domesticInit2();
+//        initInsuranceService.overseaInit1();
+//        initInsuranceService.overseaInit2();
+//    }
 
     @Component
     @Transactional
@@ -81,7 +81,7 @@ public class InitInsurances {
                     "해외여행 중 중대 사고 구조,송환 비용(7일이상) - 5000만원",
                     "해외여행 중 항공기 납치 - 140만원",
                     "해외여행 중 중대 사고로 인한 여행 중단 추가 비용 - 30만원",
-                    "항공기 지연, 취소 - 10만원",
+                    "항공기 및 수하물 지연 보상 - 10만원",
                     "해외여행 중 여권 분실,재발급 비용 - 6만원",
                     "해외여행 중 식중독 입원 일당 - 2만원",
                     "해외여행 중 특정 전염병 치료비 - 20만원"
@@ -105,7 +105,7 @@ public class InitInsurances {
                     "해외여행 중 중대 사고 구조,송환 비용(7일이상) - 6000만원",
                     "해외여행 중 항공기 납치 - 180만원",
                     "해외여행 중 중대 사고로 인한 여행 중단 추가 비용 - 50만원",
-                    "항공기 지연, 취소 - 15만원",
+                    "항공기 및 수하물 지연 보상 - 15만원",
                     "해외여행 중 여권 분실,재발급 비용 - 6만원",
                     "해외여행 중 식중독 입원 일당 - 2만원",
                     "해외여행 중 특정 전염병 치료비 - 25만원"

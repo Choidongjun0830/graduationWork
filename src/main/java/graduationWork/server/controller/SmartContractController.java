@@ -51,7 +51,6 @@ public class SmartContractController {
         Transactions transaction = userTransactions.get(0);
 
         String receiptUrl = etherscanApiClient.makeReceiptUrl(transaction.getHash());
-        model.addAttribute("contractAddress", contractAddress);
         model.addAttribute("transaction", transaction);
         model.addAttribute("receiptUrl", receiptUrl);
         return "ether/depositReceipt";

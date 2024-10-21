@@ -7,17 +7,17 @@ import org.hibernate.validator.constraints.Length;
 @Data
 public class MemberJoinForm {
 
-    @NotBlank(message = "{please.enter.name}")
+    @NotBlank(message = "이름을 입력해주세요.")
     private String username;
 
-    @NotBlank(message = "{please.enter.login.id}")
+    @NotBlank(message = "로그인 아이디를 입력해주세요.")
     private String loginId;
 
-    @NotBlank(message = "{please.enter.password}")
+    @NotBlank(message = "비밀번호를 입력해주세요.")
     @Length(min=8, max=20)
     private String password;
 
-    @NotBlank(message = "{please.enter.email}")
+    @NotBlank(message = "이메일을 입력해주세요.")
     private String email;
 
     private String walletAddress;

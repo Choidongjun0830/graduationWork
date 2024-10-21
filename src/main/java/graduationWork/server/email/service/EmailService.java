@@ -160,7 +160,7 @@ public class EmailService {
                 .append("<p><strong>시작일:</strong> ").append(userInsurance.getStartDate()).append("</p>")
                 .append("<p><strong>종료일:</strong> ").append(userInsurance.getEndDate()).append("</p>")
                 .append("<p><strong>가입료(원):</strong> ").append(userInsurance.getRegisterPrice()).append("</p>")
-                .append("<p><strong>가입료(ETH):</strong> ").append(userInsurance.getEtherRegisterPrice()).append("</p>")
+                .append("<p><strong>가입료(이더리움):</strong> ").append(userInsurance.getEtherRegisterPrice()).append("</p>")
                 .append("</div>")
                 .append("</div>")
                 .append("</div>");
@@ -183,7 +183,7 @@ public class EmailService {
                 .append("<p><strong>시작일:</strong> ").append(userInsurance.getStartDate()).append("</p>")
                 .append("<p><strong>종료일:</strong> ").append(userInsurance.getEndDate()).append("</p>")
                 .append("<p><strong>가입료(원):</strong> ").append(userInsurance.getRegisterPrice()).append("</p>")
-                .append("<p><strong>가입료(ETH):</strong> ").append(userInsurance.getEtherRegisterPrice()).append("</p>")
+                .append("<p><strong>가입료(이더리움):</strong> ").append(userInsurance.getEtherRegisterPrice()).append("</p>")
                 .append("</div>")
                 .append("</div>")
                 .append("</div>");
@@ -206,7 +206,7 @@ public class EmailService {
                 .append("<p><strong>신청 사유:</strong> ").append(userInsurance.getReason()).append("</p>")
                 .append("<p><strong>발생일:</strong> ").append(userInsurance.getOccurrenceDate()).append("</p>")
                 .append("<p><strong>보상 금액(원):</strong> ").append(userInsurance.getCompensationAmount()).append("</p>")
-                .append("<p><strong>보상 금액(ETH):</strong> ").append(userInsurance.getCompensationAmountEther()).append("</p>")
+                .append("<p><strong>보상 금액(이더리움):</strong> ").append(userInsurance.getCompensationAmountEther()).append("</p>")
                 .append("</div>")
                 .append("</div>")
                 .append("</div>");
@@ -229,7 +229,7 @@ public class EmailService {
                 .append("<p><strong>신청 사유:</strong> ").append(userInsurance.getReason()).append("</p>")
                 .append("<p><strong>발생일:</strong> ").append(userInsurance.getOccurrenceDate()).append("</p>")
                 .append("<p><strong>보상 금액(원):</strong> ").append(userInsurance.getCompensationAmount()).append("</p>")
-                .append("<p><strong>보상 금액(ETH):</strong> ").append(userInsurance.getCompensationAmountEther()).append("</p>")
+                .append("<p><strong>보상 금액(이더리움):</strong> ").append(userInsurance.getCompensationAmountEther()).append("</p>")
                 .append("</div>")
                 .append("</div>")
                 .append("</div>");
@@ -252,7 +252,7 @@ public class EmailService {
                 .append("<p><strong>신청 사유:</strong> ").append(userInsurance.getReason()).append("</p>")
                 .append("<p><strong>발생일:</strong> ").append(userInsurance.getOccurrenceDate()).append("</p>")
                 .append("<p><strong>보상 금액(원):</strong> ").append(userInsurance.getCompensationAmount()).append("</p>")
-                .append("<p><strong>보상 금액(ETH):</strong> ").append(userInsurance.getCompensationAmountEther()).append("</p>")
+                .append("<p><strong>보상 금액(이더리움):</strong> ").append(userInsurance.getCompensationAmountEther()).append("</p>")
                 .append("</div>")
                 .append("</div>")
                 .append("</div>");
